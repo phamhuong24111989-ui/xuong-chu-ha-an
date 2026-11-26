@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<script>if(/\.github\.io$/.test(location.hostname))location.replace('https://xuong-anh-thuong-hieu.pages.dev/'+location.search+location.hash)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Xưởng Ảnh Thương Hiệu</title>
 <meta property="og:type" content="website">
@@ -514,12 +515,13 @@ function conHan(s,now){now=now||Date.now();if(!s||!s.email)return{k:'none'};
   if(s.expires_at&&Date.parse(s.expires_at)>now)return{k:'trial',ngay:ngay(s.expires_at)};
   return{k:'expired'}}
 const choPhep=()=>{const k=conHan(docTK()).k;return k==='paid'||k==='trial'};
-async function goiTK(email,create,mk){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),8000);
+async function goiTK(email,create,mk){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),12000);
   try{const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,create,marketingOptIn:!!mk}),signal:ctl.signal});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok)return{loi:j.error||'Có lỗi, bạn thử lại nhé.',mang:r.status>=500};
-    return j}
-  catch(e){return{mang:true,loi:'Không có mạng'}}
+    const tx=await r.text();let j=null;try{j=JSON.parse(tx)}catch(e){}
+    if(r.ok&&j&&j.ok)return j;
+    const tt=tx.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,50);
+    return{loi:(j&&j.error)||('Có lỗi (mã '+r.status+(tt?': '+tt:'')+'). Bạn chụp màn hình gửi Hà An nhé.'),status:r.status}}
+  catch(e){return{mang:true,loi:(e&&e.name)||'lỗi mạng'}}
   finally{clearTimeout(t)}}
 function gate(loai,msg){$('gate').hidden=false;$('gate-new').hidden=loai!=='new';$('gate-end').hidden=loai!=='expired';$('gate-msg').textContent=msg||''}
 function veTrial(){const h=conHan(docTK()),el=$('trial');
@@ -543,7 +545,7 @@ $('gate-form').onsubmit=async e=>{e.preventDefault();
   const j=await goiTK(email,true,$('gate-mk').checked);
   $('gate-go').disabled=false;
   if(j.ok&&j.status!=='none'){luuTK(rutTK(email,j));return capNhat()}
-  gate('new',j.mang?'Lần đầu cần có mạng để kích hoạt. Bạn kết nối mạng rồi thử lại nhé.':(j.loi||'Có lỗi, bạn thử lại nhé.'))};
+  gate('new',j.mang?'Chưa kết nối được máy chủ ('+j.loi+'). Bạn kiểm tra mạng rồi thử lại nhé.':(j.loi||'Có lỗi, bạn thử lại nhé.'))};
 $('gate-check').onclick=async()=>{const s=docTK();if(!s)return capNhat();
   $('gate-check').disabled=true;gate('expired','Đang kiểm tra...');
   const j=await goiTK(s.email,false);$('gate-check').disabled=false;
