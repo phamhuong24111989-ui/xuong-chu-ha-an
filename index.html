@@ -623,10 +623,10 @@ if(CHE_DO_MAU)cheDoMau();
 
 // Ảnh bìa trên đầu trang: các ảnh mẫu xếp nghiêng, vẽ lúc mở trang bằng chính các kiểu chữ của app.
 async function veBia(){
-  try{const im=new Image();im.src='assets/mau-ha-an.jpg';await im.decode();
-    const pick=[['poster','Dám nghĩ lớn, **dám làm thật**',-9],['thiep-chuc','Chúc mừng sinh nhật, **tuổi mới thật rực rỡ**',4],['trich-dan','Gương mặt thật tạo **niềm tin thật**',-4],['phu-mau','Tự tin bắt đầu từ **chính bạn**',7],['khung-vien','Đẹp tự nhiên là **phong cách riêng**',-6]];
+  try{const anh=await Promise.all([1,2,3,4,5].map(async n=>{const i=new Image();i.src='assets/bia-'+n+'.jpg';await i.decode();return i}));
+    const pick=[['poster','Dám nghĩ lớn, **dám làm thật**',-9],['thiep-chuc','Chúc mừng ngày Tết, **vạn sự an lành**',4],['trich-dan','Vẻ đẹp đến từ **sự tinh tế**',-4],['phu-mau','Tự tin bắt đầu từ **chính bạn**',7],['khung-vien','Đẹp tự nhiên là **phong cách riêng**',-6]];
     const c=$('bia').getContext('2d'),cw=270,ch=337,ys=[70,28,86,34,78];
-    for(let i=0;i<pick.length;i++){const[id,t,rot]=pick[i],k=KIEU.find(k=>k.id===id),card=await ve(im,t,'Xưởng Ảnh Thương Hiệu','#17C662',k,.25);
+    for(let i=0;i<pick.length;i++){const[id,t,rot]=pick[i],k=KIEU.find(k=>k.id===id),card=await ve(anh[i],t,'Xưởng Ảnh Thương Hiệu','#17C662',k,.25);
       const cx=70+i*228+cw/2,cy=ys[i]+ch/2+50;c.save();c.translate(cx,cy);c.rotate(rot*Math.PI/180);
       c.shadowColor='rgba(14,59,34,.35)';c.shadowBlur=26;c.shadowOffsetY=10;c.fillStyle='#fff';c.beginPath();c.roundRect(-cw/2-7,-ch/2-7,cw+14,ch+14,18);c.fill();c.shadowColor='transparent';
       c.save();c.beginPath();c.roundRect(-cw/2,-ch/2,cw,ch,12);c.clip();c.drawImage(card,-cw/2,-ch/2,cw,ch);c.restore();c.restore()}

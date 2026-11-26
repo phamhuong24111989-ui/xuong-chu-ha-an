@@ -1,5 +1,5 @@
-const V='xuong-chu-v18';
-const FILES=['./','./index.html','./manifest.webmanifest','./cau-mau.js','./cau-mau-2.js','./assets/mau-ha-an.jpg','./assets/fonts/Lato-Black.ttf','./icons/icon-192.png','./icons/icon-512.png'];
+const V='xuong-chu-v19';
+const FILES=['./','./index.html','./manifest.webmanifest','./cau-mau.js','./cau-mau-2.js','./assets/bia-1.jpg','./assets/bia-2.jpg','./assets/bia-3.jpg','./assets/bia-4.jpg','./assets/bia-5.jpg','./assets/fonts/Lato-Black.ttf','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;
