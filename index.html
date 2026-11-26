@@ -100,6 +100,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 <body>
 <header><h1>Xưởng Ảnh Thương Hiệu</h1><p>Chèn câu nói + thương hiệu lên ảnh: poster, trích dẫn, bìa YouTube, story và nhiều kiểu khác. Miễn phí, ảnh không rời khỏi máy của bạn.</p></header>
 <div id="trial" class="trial" hidden></div>
+<div id="wv" class="trial gap" hidden>Bạn đang mở trong Zalo/Facebook nên tải ảnh sẽ khó. Bấm dấu <b>⋯</b> rồi chọn <b>Mở bằng trình duyệt</b> để ảnh lưu thẳng về máy.</div>
 <div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" style="background:var(--lime)">Cài app</button></div></div>
 <main>
   <section class="card">
@@ -117,7 +118,10 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
     <div class="step"><i>4</i> Chữ trên ảnh</div>
     <div class="seg"><button type="button" id="m1" class="on">✨ Gợi ý giúp tôi</button><button type="button" id="m2">📝 Dán nội dung</button></div>
     <div id="p1">
-      <p class="hint" style="margin-top:12px">Chọn một câu bên dưới. Muốn đúng ý hơn, hãy dán nội dung của bạn.</p>
+      <div class="row" style="margin-top:12px"><button type="button" id="aibtn" style="background:#fff;border:1px solid var(--mint)">✨ AI viết câu theo ảnh của bạn</button><span class="hint" id="aitt"></span></div>
+      <p class="hint">Khi bấm nút AI, ảnh thu nhỏ của bạn được gửi tới AI của Google để viết câu, mình không lưu lại. Không bấm thì ảnh vẫn ở trong máy bạn.</p>
+      <div class="chips" id="ai-list"></div>
+      <p class="hint" style="margin-top:12px">Hoặc chọn một câu mẫu bên dưới. Muốn đúng ý hơn, hãy dán nội dung của bạn.</p>
       <div class="chips" id="mau-list"></div>
       <div class="row" style="margin-top:10px"><button type="button" id="ngaunhien" style="background:var(--lime)">🎲 Chọn ngẫu nhiên</button></div>
     </div>
@@ -147,10 +151,16 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
     <div class="step"><i>✓</i> Kết quả</div>
     <div id="pv"><div class="empty">Ảnh sẽ hiện ở đây</div></div>
     <div class="row" style="margin-top:12px"><button id="taitatca" type="button" style="display:none">Tải tất cả</button></div>
-    <p class="hint">Mọi thứ xử lý ngay trong trình duyệt của bạn, ảnh không gửi đi đâu.</p>
+    <p class="hint">Chèn chữ và tạo ảnh xử lý ngay trong trình duyệt của bạn. Ảnh chỉ được gửi đi khi bạn tự bấm nút AI viết câu.</p>
   </section>
 </main>
 <footer>Làm bởi Hà An · theo cách anh Phong dạy: biến skill thành app.</footer>
+<div class="gate" id="xem" hidden style="z-index:60"><div class="gatebox" style="max-width:480px">
+  <h2>Lưu ảnh về máy</h2>
+  <p>Nhấn giữ vào ảnh rồi chọn <b>Lưu ảnh</b>. Nếu không có nút lưu, bấm dấu <b>⋯</b> của trình duyệt, chọn <b>Mở bằng trình duyệt</b> rồi tải lại.</p>
+  <div id="xem-anh"></div>
+  <button id="xem-dong" type="button">Đóng</button>
+</div></div>
 <div class="gate" id="gate" hidden><div class="gatebox">
   <div id="gate-new">
     <h2>Dùng thử miễn phí 7 ngày</h2>
@@ -175,7 +185,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 <script>
 const $=id=>document.getElementById(id);
 const MARGIN=64,BFS=28,BMIN=18,FONT='LatoBlack',TOI='#0f0f0f',INK='#0E3B22';
-let img=null,nhom=Object.keys(CAU_MAU)[0],qty=1,mau='#17c662',mode=1,chon=[],goiyArr=[],outs=[];
+let img=null,nhom=Object.keys(CAU_MAU)[0],qty=1,mau='#17c662',mode=1,chon=[],goiyArr=[],aiArr=[],outs=[];
 const nap=f=>{if(!f)return;const im=new Image();im.onload=()=>{img=im;$('drop').textContent='Đã chọn: '+f.name;$('drop').classList.add('on');veThumbs()};im.src=URL.createObjectURL(f)};
 $('drop').onclick=()=>$('file').click();$('file').onchange=e=>nap(e.target.files[0]);
 $('drop').ondragover=e=>e.preventDefault();$('drop').ondrop=e=>{e.preventDefault();nap(e.dataTransfer.files[0])};
@@ -471,18 +481,42 @@ function capNhatChon(){$('dachon').textContent=chon.length?('Đã chọn '+chon.
 function bam(t){const i=chon.indexOf(t);if(i>=0)chon.splice(i,1);else{chon.push(t);while(chon.length>qty)chon.shift()}veChips();capNhatChon()}
 function veChips(){
   const mk=(box,arr)=>{box.innerHTML='';arr.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(chon.includes(t)?' on':'');b.textContent=plain(t);b.onclick=()=>bam(t);box.appendChild(b)})};
-  mk($('mau-list'),CAU_MAU[nhom]);mk($('goiy-list'),goiyArr)}
+  mk($('mau-list'),CAU_MAU[nhom]);mk($('goiy-list'),goiyArr);mk($('ai-list'),aiArr)}
 function vePills(){$('pills').innerHTML='';Object.keys(CAU_MAU).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pill'+(k===nhom?' on':'');b.textContent=k;b.onclick=()=>{nhom=k;vePills();veChips();sapKieu()};$('pills').appendChild(b)})}
 function setMode(m){mode=m;$('m1').classList.toggle('on',m===1);$('m2').classList.toggle('on',m===2);$('p1').style.display=m===1?'block':'none';$('p2').style.display=m===2?'block':'none'}
 $('m1').onclick=()=>setMode(1);$('m2').onclick=()=>setMode(2);
 $('ngaunhien').onclick=()=>{const a=CAU_MAU[nhom];chon=[];while(chon.length<qty&&chon.length<a.length){const t=a[Math.floor(Math.random()*a.length)];if(!chon.includes(t))chon.push(t)}veChips();capNhatChon()};
 $('goiy').onclick=()=>{goiyArr=goiY($('noidung').value);veChips()};
+// AI viết câu theo ảnh: gửi ảnh đã thu nhỏ lên máy chủ của mình, máy chủ hỏi Gemini (khoá nằm ở máy chủ).
+function anhNho(){const s=Math.min(1,768/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.8).split(',')[1]}
+$('aibtn').onclick=async()=>{
+  if(!img){$('aitt').textContent='Bạn chọn ảnh ở bước 1 trước nhé.';return}
+  if(!choPhep()){capNhat();return}
+  const tk=docTK();$('aibtn').disabled=true;$('aitt').textContent='AI đang xem ảnh và viết câu...';
+  try{const r=await fetch('/api/ai-cau',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:tk.email,nhom,image:anhNho()})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.cau){aiArr=j.cau;veChips();$('aitt').textContent='AI gợi ý '+j.cau.length+' câu, bấm vào câu bạn thích.'}
+    else $('aitt').textContent=j.error||('Chưa dùng được AI (mã '+r.status+').')}
+  catch(e){$('aitt').textContent='Không có mạng nên chưa dùng được AI.'}
+  $('aibtn').disabled=false};
 const COLORS=['#17C662','#D8FF3D','#FF7A1A','#FF5C8A','#3B82F6','#FFC81E'];
 let mauTimer=0;const doiMau=()=>{clearTimeout(mauTimer);mauTimer=setTimeout(veThumbs,200)};
 function veSw(){$('sws').innerHTML='';COLORS.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='sw'+(c.toLowerCase()===mau.toLowerCase()?' on':'');b.style.background=c;b.setAttribute('aria-label','Màu '+c);b.onclick=()=>{mau=c;veSw();doiMau()};$('sws').appendChild(b)});
   const i=document.createElement('input');i.type='color';i.value=mau;i.oninput=()=>{mau=i.value;document.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));doiMau()};$('sws').appendChild(i)}
 function veQty(){$('qty').innerHTML='';[1,2,3,4].forEach(n=>{const b=document.createElement('button');b.type='button';b.textContent=n;b.className=n===qty?'on':'';b.onclick=()=>{qty=n;while(chon.length>qty)chon.shift();veQty();veChips();capNhatChon()};$('qty').appendChild(b)})}
-function tai(cv,ten){return new Promise(r=>cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=ten;a.click();r()},'image/jpeg',.95))}
+// Tải ảnh: máy tính tải thẳng; iPhone và trình duyệt trong Zalo/Facebook không cho tải thẳng nên dùng bảng chia sẻ "Lưu ảnh", không có thì hiện ảnh để nhấn giữ lưu.
+const blobCua=cv=>new Promise(r=>cv.toBlob(r,'image/jpeg',.95));
+const khoTai=()=>/iphone|ipad|ipod|zalo|fban|fbav|instagram|line\//i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function hienAnh(urls){const box=$('xem-anh');box.innerHTML='';urls.forEach(u=>{const i=document.createElement('img');i.src=u;i.alt='Ảnh đã tạo';i.style.cssText='width:100%;border-radius:12px;margin-bottom:10px;display:block';box.appendChild(i)});$('xem').hidden=false}
+async function taiNhieu(cvs,tens){
+  const blobs=await Promise.all(cvs.map(blobCua));
+  if(!khoTai()){for(let i=0;i<blobs.length;i++){const a=document.createElement('a');a.href=URL.createObjectURL(blobs[i]);a.download=tens[i];document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,400))}return}
+  const files=blobs.map((b,i)=>new File([b],tens[i],{type:'image/jpeg'}));
+  if(navigator.canShare&&navigator.canShare({files})){try{await navigator.share({files});return}catch(e){if(e&&e.name==='AbortError')return}}
+  hienAnh(blobs.map(b=>URL.createObjectURL(b)))}
+const tai=(cv,ten)=>taiNhieu([cv],[ten]);
+$('xem-dong').onclick=()=>{$('xem').hidden=true};
+if(/zalo|fban|fbav|instagram/i.test(navigator.userAgent))$('wv').hidden=false;
 $('tao').onclick=async()=>{
   if(!choPhep()){capNhat();return}
   if(!img){$('tt').textContent='Bạn chọn ảnh trước nhé';return}
@@ -501,7 +535,7 @@ $('tao').onclick=async()=>{
     $('taitatca').style.display=outs.length>1?'inline-block':'none';$('tt').textContent='Xong!'}
   catch(e){$('tt').textContent='Lỗi: '+e.message}
   $('tao').disabled=false};
-$('taitatca').onclick=async()=>{for(let i=0;i<outs.length;i++){await tai(outs[i],'anh-'+outs.kieu+'-'+(i+1)+'.jpg');await new Promise(r=>setTimeout(r,400))}};
+$('taitatca').onclick=()=>taiNhieu(outs,outs.map((_,i)=>'anh-'+outs.kieu+'-'+(i+1)+'.jpg'));
 vePills();veChips();veSw();veQty();veKieu();veThumbs();
 
 // Đăng nhập bằng email + dùng thử 7 ngày. Máy chủ (/api/trial) là nơi quyết định; bản lưu trong máy chỉ để dùng khi mất mạng.
