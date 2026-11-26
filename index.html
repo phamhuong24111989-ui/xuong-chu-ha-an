@@ -83,7 +83,7 @@ function fit(c,toks,maxW){
   if(cur.length)lines.push(cur);return[FMIN,lines]}
 
 async function ve(im,tieude,badge,mau){
-  await document.fonts.load('72px '+FONT);
+  await Promise.race([document.fonts.load('72px '+FONT),new Promise(r=>setTimeout(r,6000))]);
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
   const sc=Math.max(W/im.width,H/im.height),nw=im.width*sc,nh=im.height*sc;
   c.drawImage(im,(W-nw)/2,(H-nh)/2,nw,nh);
