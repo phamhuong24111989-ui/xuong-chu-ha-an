@@ -31,7 +31,11 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif}
 header{background:linear-gradient(100deg,#17C662,#70DD66 55%,#F5FF6C);padding:18px 24px;color:var(--ink)}
+header{position:relative;overflow:hidden;min-height:170px;display:flex;align-items:center}
+header .txt{position:relative;z-index:1;max-width:54%}
 header h1{margin:0;font-size:24px}header p{margin:4px 0 0;font-size:14px}
+#bia{position:absolute;right:-10px;top:50%;transform:translateY(-50%);height:270px;width:auto;z-index:0;pointer-events:none}
+@media(max-width:820px){header{display:block;min-height:0}header .txt{max-width:100%}#bia{position:static;transform:none;height:130px;display:block;margin:10px auto -14px}}
 main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
 @media(max-width:820px){main{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
@@ -78,6 +82,13 @@ input[type=color]{width:38px;height:38px;border:0;border-radius:10px;padding:0;b
 .empty{aspect-ratio:4/5;background:#e9f7e4;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
 .hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.45}
 footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:var(--muted)}
+.mau-wrap{margin:0 auto;padding:8px 10px;text-align:center}
+.mau-wrap h1{margin:0;font-size:22px;color:var(--ink);display:inline}.mau-wrap p{margin:0 0 0 12px;color:var(--muted);font-size:14px;display:inline}
+.mau-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.mau-o{background:#fff;border:1px solid var(--line);border-radius:10px;padding:5px;min-width:0}
+.mau-o canvas{width:100%;height:220px;object-fit:contain;display:block;border-radius:6px;background:#eef7ea}
+.mau-t{margin-top:4px;font-weight:700;color:var(--ink);font-size:12px;line-height:1.2}
+@media(min-width:1200px){.mau-grid{grid-template-columns:repeat(9,1fr)}.mau-o canvas{height:calc((100vh - 76px) / 3 - 36px)}}
 .gate{position:fixed;inset:0;z-index:50;background:rgba(14,59,34,.94);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;-webkit-overflow-scrolling:touch}
 .gatebox{margin:auto}
 @media(max-height:620px){.gatebox{padding:16px}.gatebox h2{font-size:18px}.gatebox p{margin:4px 0 8px}}
@@ -98,7 +109,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 </style>
 </head>
 <body>
-<header><h1>Xưởng Ảnh Thương Hiệu</h1><p>Chèn câu nói + thương hiệu lên ảnh: poster, trích dẫn, bìa YouTube, story và nhiều kiểu khác. Miễn phí, ảnh không rời khỏi máy của bạn.</p></header>
+<header><div class="txt"><h1>Xưởng Ảnh Thương Hiệu</h1><p>Chèn câu nói + thương hiệu lên ảnh: poster, trích dẫn, bìa YouTube, story và nhiều kiểu khác. Miễn phí, ảnh không rời khỏi máy của bạn.</p></div><canvas id="bia" width="1250" height="560" aria-hidden="true"></canvas></header>
 <div id="trial" class="trial" hidden></div>
 <div id="wv" class="trial gap" hidden>Bạn đang mở trong Zalo/Facebook nên tải ảnh sẽ khó. Bấm dấu <b>⋯</b> rồi chọn <b>Mở bằng trình duyệt</b> để ảnh lưu thẳng về máy.</div>
 <div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" style="background:var(--lime)">Cài app</button></div></div>
@@ -183,6 +194,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 <script src="cau-mau-2.js"></script>
 <script>
 const $=id=>document.getElementById(id);
+const CHE_DO_MAU=/[?&]mau=1/.test(location.search); // trang xem các kiểu chữ trên ảnh thật để chụp màn hình chia sẻ; app bình thường không đổi
 const MARGIN=64,BFS=28,BMIN=18,FONT='LatoBlack',TOI='#0f0f0f',INK='#0E3B22';
 let img=null,nhom=Object.keys(CAU_MAU)[0],qty=1,mau='#17c662',mode=1,chon=[],goiyArr=[],aiArr=[],outs=[];
 const nap=f=>{if(!f)return;const im=new Image();im.onload=()=>{img=im;$('drop').textContent='Đã chọn: '+f.name;$('drop').classList.add('on');veThumbs()};im.src=URL.createObjectURL(f)};
@@ -561,11 +573,11 @@ function veTrial(){const h=conHan(docTK()),el=$('trial');
   if(h.k==='paid'){el.className='trial paid';el.textContent='✅ Đã kích hoạt · còn '+h.ngay+' ngày';el.hidden=false}
   else if(h.k==='trial'){el.className='trial'+(h.ngay<=2?' gap':'');el.innerHTML='🎁 Dùng thử miễn phí: còn <b>'+h.ngay+' ngày</b> · <a href="'+ZALO+'" target="_blank" rel="noopener">Dùng tiếp</a>';el.hidden=false}
   else el.hidden=true}
-function capNhat(){const s=docTK(),h=conHan(s);
+function capNhat(){if(CHE_DO_MAU)return;const s=docTK(),h=conHan(s);
   if(h.k==='none'){$('trial').hidden=true;return gate('new')}
   if(h.k==='expired'){$('trial').hidden=true;$('gate-mail').textContent=s.email;return gate('expired')}
   $('gate').hidden=true;veTrial()}
-async function khoiDong(){const s=docTK();
+async function khoiDong(){if(CHE_DO_MAU)return;const s=docTK();
   if(s&&s.email){const j=await goiTK(s.email,false);
     if(j.ok&&j.status==='none')luuTK(null);
     else if(j.ok)luuTK(rutTK(s.email,j))}
@@ -593,11 +605,33 @@ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.sta
 const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
 if(!standalone){
   if(ios){$('cai').style.display='block';$('caibtn').style.display='none';$('caitext').innerHTML='<b>Cài app trên iPhone:</b> mở link bằng Safari, bấm nút Chia sẻ (hình vuông có mũi tên lên) rồi chọn <b>Thêm vào Màn hình chính</b>.'}
-  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('cai').style.display='block'});
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;if($('cai'))$('cai').style.display='block'});
   $('caibtn').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('cai').style.display='none'};
 }
-addEventListener('appinstalled',()=>{$('cai').style.display='none'});
+addEventListener('appinstalled',()=>{if($('cai'))$('cai').style.display='none'});
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+// Trang xem mẫu: mở /?mau=1 để thấy mọi kiểu chữ trên một tấm ảnh thật, dùng để chụp màn hình chia sẻ.
+const CAU_MAU_XEM={'poster':'Dám nghĩ lớn, **dám làm thật**','poster-ngang':'Khai trương **rộn ràng ưu đãi**','thiep-chuc':'Chúc mừng sinh nhật, **tuổi mới thật rực rỡ**','thiep-moi':'Trân trọng kính mời **quý khách đến dự**','gia-khuyen-mai':'Khoá học AI chỉ còn **199.000đ**','chop-nhoang':'Mua 1 tặng 1, **giảm 50%**','tin-nong':'Ra mắt **công cụ chèn chữ lên ảnh**','su-kien':'Workshop **làm thương hiệu cá nhân**','san-pham':'Sản phẩm mới, **đẹp từ cái nhìn đầu**','meo-hay':'Mẹo hay: ảnh đẹp bắt đầu từ **ánh sáng**','youtube':'Học AI **từ con số 0**'};
+async function cheDoMau(){
+  document.title='Xưởng Ảnh Thương Hiệu · 27 kiểu chữ';document.body.style.background='#F6FFF2';
+  document.body.innerHTML='<div class="mau-wrap"><h1>Xưởng Ảnh Thương Hiệu</h1><p>'+KIEU.length+' kiểu chữ có sẵn: poster, thiệp, bìa video, story và nhiều kiểu khác</p><div class="mau-grid" id="mau-grid"></div></div>';
+  const im=new Image();im.src='assets/mau-ha-an.jpg';await im.decode();
+  for(const k of KIEU){const cv=await ve(im,CAU_MAU_XEM[k.id]||'Thương hiệu cá nhân là **tài sản dài hạn**','Xưởng Ảnh Thương Hiệu','#17C662',k,.3);
+    const d=document.createElement('div');d.className='mau-o';d.appendChild(cv);const t=document.createElement('div');t.className='mau-t';t.textContent=k.ten+' · '+k.tl;d.appendChild(t);$('mau-grid').appendChild(d)}}
+if(CHE_DO_MAU)cheDoMau();
+
+// Ảnh bìa trên đầu trang: các ảnh mẫu xếp nghiêng, vẽ lúc mở trang bằng chính các kiểu chữ của app.
+async function veBia(){
+  try{const im=new Image();im.src='assets/mau-ha-an.jpg';await im.decode();
+    const pick=[['poster','Dám nghĩ lớn, **dám làm thật**',-9],['thiep-chuc','Chúc mừng sinh nhật, **tuổi mới thật rực rỡ**',4],['trich-dan','Gương mặt thật tạo **niềm tin thật**',-4],['phu-mau','Tự tin bắt đầu từ **chính bạn**',7],['khung-vien','Đẹp tự nhiên là **phong cách riêng**',-6]];
+    const c=$('bia').getContext('2d'),cw=270,ch=337,ys=[70,28,86,34,78];
+    for(let i=0;i<pick.length;i++){const[id,t,rot]=pick[i],k=KIEU.find(k=>k.id===id),card=await ve(im,t,'Xưởng Ảnh Thương Hiệu','#17C662',k,.25);
+      const cx=70+i*228+cw/2,cy=ys[i]+ch/2+50;c.save();c.translate(cx,cy);c.rotate(rot*Math.PI/180);
+      c.shadowColor='rgba(14,59,34,.35)';c.shadowBlur=26;c.shadowOffsetY=10;c.fillStyle='#fff';c.beginPath();c.roundRect(-cw/2-7,-ch/2-7,cw+14,ch+14,18);c.fill();c.shadowColor='transparent';
+      c.save();c.beginPath();c.roundRect(-cw/2,-ch/2,cw,ch,12);c.clip();c.drawImage(card,-cw/2,-ch/2,cw,ch);c.restore();c.restore()}
+  }catch(e){}}
+if(!CHE_DO_MAU)veBia();
 </script>
 </body>
 </html>
