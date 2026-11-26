@@ -492,7 +492,7 @@ function anhNho(){const s=Math.min(1,768/Math.max(img.width,img.height)),c=docum
 $('aibtn').onclick=async()=>{
   if(!img){$('aitt').textContent='Bạn chọn ảnh ở bước 1 trước nhé.';return}
   if(!choPhep()){capNhat();return}
-  const tk=docTK();$('aibtn').disabled=true;$('aitt').textContent='AI đang xem ảnh và viết câu...';
+  const tk=docTK();$('aibtn').disabled=true;$('aitt').textContent='AI đang xem ảnh và viết câu, mất khoảng 20–30 giây, bạn chờ chút nhé...';
   try{const r=await fetch('/api/ai-cau',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:tk.email,nhom,image:anhNho()})});
     const j=await r.json().catch(()=>({}));
     if(r.ok&&j.cau){aiArr=j.cau;veChips();$('aitt').textContent='AI gợi ý '+j.cau.length+' câu, bấm vào câu bạn thích.'}
