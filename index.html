@@ -193,6 +193,15 @@ const KIEU=[
   const b=khoi(c,tk,{maxW:W-240,fs:116,fmin:56,maxLines:4,upper:true,sp:10});
   ghi(c,b,W/2,170,'c','#fff',ac);
   const bn=nhanDo(c,bd,W-200);veNhan(c,bn,bd,(W-bn.w)/2,H-110-bn.h,ac,muc(ac))}},
+{id:'poster-ngang',ten:'Poster ngang',tl:'16:9',w:1600,h:900,ve(c,W,H,im,tk,bd,ac){
+  cover(c,im,0,0,W,H);c.fillStyle='rgba(0,0,0,.42)';c.fillRect(0,0,W,H);
+  phu(c,W,H,0,H*.6,0,H,.55,1.3);
+  c.strokeStyle='#fff';c.lineWidth=5;c.strokeRect(30,30,W-60,H-60);
+  const b=khoi(c,tk,{maxW:W-340,fs:124,fmin:56,maxLines:3,upper:true,sp:10}),bn=nhanDo(c,bd,W-400);
+  const tong=22+60+b.h,y=(H-tong-(bn.h?bn.h+30:0))/2;
+  c.fillStyle=ac;c.fillRect(W/2-70,y,140,10);
+  ghi(c,b,W/2,y+60,'c','#fff',ac);
+  veNhan(c,bn,bd,(W-bn.w)/2,H-80-bn.h,ac,muc(ac))}},
 {id:'tieu-de-lon',ten:'Tiêu đề lớn',tl:'4:5',w:1080,h:1350,ve(c,W,H,im,tk,bd,ac){
   cover(c,im,0,0,W,H);c.fillStyle='rgba(0,0,0,.5)';c.fillRect(0,0,W,H);
   const b=khoi(c,tk,{maxW:W-150,fs:128,fmin:56,maxLines:5,upper:true,sp:12}),bn=nhanDo(c,bd,W-2*MARGIN);
@@ -385,7 +394,7 @@ function anhMau(){const cv=document.createElement('canvas');cv.width=800;cv.heig
   const g=c.createLinearGradient(0,0,800,1000);g.addColorStop(0,'#3a6b52');g.addColorStop(1,'#14301f');c.fillStyle=g;c.fillRect(0,0,800,1000);
   c.fillStyle='rgba(255,255,255,.16)';c.beginPath();c.arc(400,380,190,0,7);c.fill();c.beginPath();c.ellipse(400,900,330,300,0,0,7);c.fill();return cv}
 const mauSrc=anhMau();
-const GOI_Y={'Poster':['poster','tieu-de-lon','slide','chop-nhoang','gia-khuyen-mai','su-kien'],
+const GOI_Y={'Poster':['poster','poster-ngang','tieu-de-lon','slide','chop-nhoang','gia-khuyen-mai','su-kien'],
  'Thiệp chúc mừng':['thiep-chuc','khung-vien','sang-trong','meo-hay','trich-dan'],
  'Thiệp mời':['thiep-moi','su-kien','sang-trong','khung-vien','trich-dan'],
  'Thương hiệu cá nhân':['mac-dinh','trich-dan','toi-gian','sang-trong','khung-vien'],
