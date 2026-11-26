@@ -38,7 +38,7 @@ main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template
 .step:first-child{margin-top:0}
 .step i{font-style:normal;background:var(--dark);color:#fff;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
 label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
-input[type=text],textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff}
+input[type=text],input[type=email],textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff}
 textarea{min-height:80px;resize:vertical}
 .drop{border:2px dashed var(--mint);border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:#f1fff0}
 .drop.on{background:#e2ffd8}
@@ -77,10 +77,26 @@ input[type=color]{width:38px;height:38px;border:0;border-radius:10px;padding:0;b
 .empty{aspect-ratio:4/5;background:#e9f7e4;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
 .hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.45}
 footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:var(--muted)}
+.gate{position:fixed;inset:0;z-index:50;background:rgba(14,59,34,.94);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.gate[hidden],.trial[hidden],#gate-new[hidden],#gate-end[hidden]{display:none}
+.gatebox{background:#fff;border-radius:20px;max-width:440px;width:100%;padding:26px;text-align:center}
+.gatebox h2{margin:0 0 8px;font-size:22px}
+.gatebox p{color:var(--muted);margin:6px 0 14px;line-height:1.5}
+.gatebox form input{text-align:center;font-size:16px;margin-bottom:6px}
+.gatebox button,.gatebox a.btn{display:block;width:100%;font-size:17px;padding:14px;border-radius:12px;text-align:center}
+.gatebox a.btn{background:var(--mint);color:var(--ink);text-decoration:none;font-weight:700;margin-bottom:10px}
+.gatebox #gate-msg{min-height:20px;margin:10px 0 0;color:#b42318;font-weight:600}
+.chk{display:flex;gap:8px;align-items:flex-start;text-align:left;font-weight:500;font-size:13px;margin:10px 0 14px}
+.chk input{margin-top:3px}
+.trial{display:flex;justify-content:center;gap:10px;align-items:center;background:#fff7c2;border-bottom:1px solid #eadf8a;padding:8px 16px;font-size:14px;font-weight:600;flex-wrap:wrap}
+.trial a{color:var(--ink);font-weight:800}
+.trial.paid{background:#e2ffd8;border-color:var(--line)}
+.trial.gap{background:#ffe3d1;border-color:#f5b88f}
 </style>
 </head>
 <body>
 <header><h1>Xưởng Ảnh Thương Hiệu</h1><p>Chèn câu nói + thương hiệu lên ảnh: poster, trích dẫn, bìa YouTube, story và nhiều kiểu khác. Miễn phí, ảnh không rời khỏi máy của bạn.</p></header>
+<div id="trial" class="trial" hidden></div>
 <div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" style="background:var(--lime)">Cài app</button></div></div>
 <main>
   <section class="card">
@@ -132,6 +148,25 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
   </section>
 </main>
 <footer>Làm bởi Hà An · theo cách anh Phong dạy: biến skill thành app.</footer>
+<div class="gate" id="gate" hidden><div class="gatebox">
+  <div id="gate-new">
+    <h2>Dùng thử miễn phí 7 ngày</h2>
+    <p>Nhập email của bạn để bắt đầu. Không cần mật khẩu, không cần thẻ.</p>
+    <form id="gate-form">
+      <input id="gate-email" type="email" autocomplete="email" placeholder="email-cua-ban@gmail.com" required>
+      <label class="chk"><input type="checkbox" id="gate-mk"><span>Mình đồng ý nhận tin ưu đãi và mẹo làm ảnh qua email (không bắt buộc).</span></label>
+      <button id="gate-go" type="submit">Bắt đầu dùng thử</button>
+    </form>
+    <p class="hint" style="margin-top:12px">Email chỉ dùng để tạo tài khoản dùng thử. Hết 7 ngày, bạn nhắn Zalo để dùng tiếp.</p>
+  </div>
+  <div id="gate-end" hidden>
+    <h2>Đã hết 7 ngày dùng thử</h2>
+    <p>Cảm ơn bạn đã dùng thử Xưởng Ảnh Thương Hiệu. Để dùng tiếp, bạn nhắn Zalo, mình báo phí và mở lại cho email <b id="gate-mail"></b>.</p>
+    <a class="btn" href="https://zalo.me/0908474139" target="_blank" rel="noopener">Nhắn Zalo để dùng tiếp</a>
+    <button id="gate-check" type="button" style="background:#fff;border:1px solid var(--line)">Mình đã trả phí, kiểm tra lại</button>
+  </div>
+  <p id="gate-msg" role="status"></p>
+</div></div>
 <script src="cau-mau.js"></script>
 <script src="cau-mau-2.js"></script>
 <script>
@@ -156,7 +191,7 @@ const lum=h=>{const[r,g,b]=rgb(h);return(.299*r+.587*g+.114*b)/255};
 const muc=h=>lum(h)>.6?TOI:'#fff';
 const rgba=(h,a)=>{const[r,g,b]=rgb(h);return'rgba('+r+','+g+','+b+','+a+')'};
 
-function cover(c,im,x,y,w,h){const sc=Math.max(w/im.width,h/im.height),nw=im.width*sc,nh=im.height*sc;c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-nw)/2,y+(h-nh)/2,nw,nh);c.restore()}
+function cover(c,im,x,y,w,h,fy){const sc=Math.max(w/im.width,h/im.height),nw=im.width*sc,nh=im.height*sc;c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-nw)/2,y+(h-nh)*(fy==null?.5:fy),nw,nh);c.restore()}
 function phu(c,W,H,x0,y0,x1,y1,a,pw){const g=c.createLinearGradient(x0,y0,x1,y1);for(let i=0;i<=20;i++){const p=i/20;g.addColorStop(p,'rgba(0,0,0,'+(a*Math.pow(p,pw)).toFixed(3)+')')}c.fillStyle=g;c.fillRect(0,0,W,H)}
 function khoi(c,toks,o){
   const sp=o.sp==null?18:o.sp;
@@ -194,7 +229,7 @@ const KIEU=[
   ghi(c,b,W/2,170,'c','#fff',ac);
   const bn=nhanDo(c,bd,W-200);veNhan(c,bn,bd,(W-bn.w)/2,H-110-bn.h,ac,muc(ac))}},
 {id:'poster-ngang',ten:'Poster ngang',tl:'16:9',w:1600,h:900,ve(c,W,H,im,tk,bd,ac){
-  cover(c,im,0,0,W,H);c.fillStyle='rgba(0,0,0,.42)';c.fillRect(0,0,W,H);
+  cover(c,im,0,0,W,H,.15);c.fillStyle='rgba(0,0,0,.42)';c.fillRect(0,0,W,H);
   phu(c,W,H,0,H*.6,0,H,.55,1.3);
   c.strokeStyle='#fff';c.lineWidth=5;c.strokeRect(30,30,W-60,H-60);
   const b=khoi(c,tk,{maxW:W-340,fs:124,fmin:56,maxLines:3,upper:true,sp:10}),bn=nhanDo(c,bd,W-400);
@@ -263,7 +298,7 @@ const KIEU=[
   ghi(c,b,MARGIN,y,'l','#fff',ac);
   veNhan(c,bn,bd,W-MARGIN-bn.w,H-MARGIN-bn.h,'#fff',TOI)}},
 {id:'youtube',ten:'Ảnh bìa YouTube',tl:'16:9',w:1280,h:720,ve(c,W,H,im,tk,bd,ac){
-  cover(c,im,0,0,W,H);phu(c,W,H,W*.8,0,0,0,.92,1.1);
+  cover(c,im,0,0,W,H,.15);phu(c,W,H,W*.8,0,0,0,.92,1.1);
   const b=khoi(c,tk,{maxW:W*.56,fs:100,fmin:48,maxLines:4,upper:true,sp:8}),bn=nhanDo(c,bd,W*.4);
   ghi(c,b,70,(H-b.h-(bn.h?bn.h+20:0))/2,'l','#fff',ac);
   veNhan(c,bn,bd,70,H-50-bn.h,'#fff',TOI)}},
@@ -362,7 +397,7 @@ const KIEU=[
 {id:'thiep-chuc',ten:'Thiệp chúc mừng',tl:'4:5',w:1080,h:1350,ve(c,W,H,im,tk,bd,ac){
   cover(c,im,0,0,W,H);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,0,W,H);
   const cs=[ac,'#FF5C8A','#FFC81E','#3B82F6','#fff'];c.globalAlpha=.85;
-  for(let i=0;i<60;i++){c.fillStyle=cs[i%5];c.beginPath();c.arc((i*7919%997)/997*W,(i*104729%991)/991*H*.5,6+(i%4)*3,0,7);c.fill()}c.globalAlpha=1;
+  for(let i=0;i<60;i++){const u=(i*7919%997)/997,x=(i%2?u*.2:1-u*.2)*W;c.fillStyle=cs[i%5];c.beginPath();c.arc(x,(i*104729%991)/991*H*.62,6+(i%4)*3,0,7);c.fill()}c.globalAlpha=1;
   const b=khoi(c,tk,{maxW:W-2*MARGIN-140,fs:84,fmin:44,maxLines:5,sp:16}),bn=nhanDo(c,bd,W-2*MARGIN-100);
   const ch=95+b.h+(bn.h?bn.h+40:0)+95,cy=H-MARGIN-ch;
   c.fillStyle='rgba(255,255,255,.94)';c.beginPath();c.roundRect(MARGIN,cy,W-2*MARGIN,ch,44);c.fill();
@@ -370,7 +405,7 @@ const KIEU=[
   ghi(c,b,W/2,cy+95,'c',INK,muc(ac),ac);
   veNhan(c,bn,bd,(W-bn.w)/2,cy+95+b.h+40,ac,muc(ac))}},
 {id:'thiep-moi',ten:'Thiệp mời',tl:'4:5',w:1080,h:1350,ve(c,W,H,im,tk,bd,ac){
-  cover(c,im,0,0,W,H);c.fillStyle='rgba(8,24,16,.72)';c.fillRect(0,0,W,H);
+  cover(c,im,0,0,W,H);c.fillStyle='rgba(8,24,16,.6)';c.fillRect(0,0,W,H);
   c.strokeStyle=ac;c.lineWidth=5;c.strokeRect(46,46,W-92,H-92);c.lineWidth=2;c.strokeRect(70,70,W-140,H-140);
   chuNho(c,'THƯ MỜI',W/2,230,'c',ac,44,W-300);
   const b=khoi(c,tk,{maxW:W-260,fs:80,fmin:44,maxLines:6,sp:16}),y=(H-b.h)/2+30;
@@ -446,6 +481,7 @@ function veSw(){$('sws').innerHTML='';COLORS.forEach(c=>{const b=document.create
 function veQty(){$('qty').innerHTML='';[1,2,3,4].forEach(n=>{const b=document.createElement('button');b.type='button';b.textContent=n;b.className=n===qty?'on':'';b.onclick=()=>{qty=n;while(chon.length>qty)chon.shift();veQty();veChips();capNhatChon()};$('qty').appendChild(b)})}
 function tai(cv,ten){return new Promise(r=>cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=ten;a.click();r()},'image/jpeg',.95))}
 $('tao').onclick=async()=>{
+  if(!choPhep()){capNhat();return}
   if(!img){$('tt').textContent='Bạn chọn ảnh trước nhé';return}
   const tay=$('tieude').value.split(/\n/).map(x=>x.trim()).filter(Boolean).map(autoTo);
   if(tay.length>qty&&qty<4){qty=Math.min(tay.length,4);veQty()}
@@ -464,6 +500,55 @@ $('tao').onclick=async()=>{
   $('tao').disabled=false};
 $('taitatca').onclick=async()=>{for(let i=0;i<outs.length;i++){await tai(outs[i],'anh-'+outs.kieu+'-'+(i+1)+'.jpg');await new Promise(r=>setTimeout(r,400))}};
 vePills();veChips();veSw();veQty();veKieu();veThumbs();
+
+// Đăng nhập bằng email + dùng thử 7 ngày. Máy chủ (/api/trial) là nơi quyết định; bản lưu trong máy chỉ để dùng khi mất mạng.
+const API='/api/trial',LS='xa_acc',ZALO='https://zalo.me/0908474139';
+const docTK=()=>{try{return JSON.parse(localStorage.getItem(LS)||'null')}catch(e){return null}};
+const luuTK=s=>{try{s?localStorage.setItem(LS,JSON.stringify(s)):localStorage.removeItem(LS)}catch(e){}};
+const rutTK=(email,j)=>({email,started_at:j.started_at,expires_at:j.expires_at,paid_until:j.paid_until});
+function conHan(s,now){now=now||Date.now();if(!s||!s.email)return{k:'none'};
+  const ngay=t=>Math.max(1,Math.ceil((Date.parse(t)-now)/864e5));
+  if(s.paid_until&&Date.parse(s.paid_until)>now)return{k:'paid',ngay:ngay(s.paid_until)};
+  if(s.expires_at&&Date.parse(s.expires_at)>now)return{k:'trial',ngay:ngay(s.expires_at)};
+  return{k:'expired'}}
+const choPhep=()=>{const k=conHan(docTK()).k;return k==='paid'||k==='trial'};
+async function goiTK(email,create,mk){const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),8000);
+  try{const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email,create,marketingOptIn:!!mk}),signal:ctl.signal});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)return{loi:j.error||'Có lỗi, bạn thử lại nhé.',mang:r.status>=500};
+    return j}
+  catch(e){return{mang:true,loi:'Không có mạng'}}
+  finally{clearTimeout(t)}}
+function gate(loai,msg){$('gate').hidden=false;$('gate-new').hidden=loai!=='new';$('gate-end').hidden=loai!=='expired';$('gate-msg').textContent=msg||''}
+function veTrial(){const h=conHan(docTK()),el=$('trial');
+  if(h.k==='paid'){el.className='trial paid';el.textContent='✅ Đã kích hoạt · còn '+h.ngay+' ngày';el.hidden=false}
+  else if(h.k==='trial'){el.className='trial'+(h.ngay<=2?' gap':'');el.innerHTML='🎁 Dùng thử miễn phí: còn <b>'+h.ngay+' ngày</b> · <a href="'+ZALO+'" target="_blank" rel="noopener">Dùng tiếp</a>';el.hidden=false}
+  else el.hidden=true}
+function capNhat(){const s=docTK(),h=conHan(s);
+  if(h.k==='none'){$('trial').hidden=true;return gate('new')}
+  if(h.k==='expired'){$('trial').hidden=true;$('gate-mail').textContent=s.email;return gate('expired')}
+  $('gate').hidden=true;veTrial()}
+async function khoiDong(){const s=docTK();
+  if(s&&s.email){const j=await goiTK(s.email,false);
+    if(j.ok&&j.status==='none')luuTK(null);
+    else if(j.ok)luuTK(rutTK(s.email,j))}
+  capNhat()}
+$('gate-form').onsubmit=async e=>{e.preventDefault();
+  const email=$('gate-email').value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return gate('new','Bạn kiểm tra lại địa chỉ email nhé.');
+  $('gate-go').disabled=true;gate('new','Đang kích hoạt...');
+  const j=await goiTK(email,true,$('gate-mk').checked);
+  $('gate-go').disabled=false;
+  if(j.ok&&j.status!=='none'){luuTK(rutTK(email,j));return capNhat()}
+  gate('new',j.mang?'Lần đầu cần có mạng để kích hoạt. Bạn kết nối mạng rồi thử lại nhé.':(j.loi||'Có lỗi, bạn thử lại nhé.'))};
+$('gate-check').onclick=async()=>{const s=docTK();if(!s)return capNhat();
+  $('gate-check').disabled=true;gate('expired','Đang kiểm tra...');
+  const j=await goiTK(s.email,false);$('gate-check').disabled=false;
+  if(j.ok&&j.status!=='none'){luuTK(rutTK(s.email,j));capNhat();if(!choPhep())gate('expired','Chưa thấy thanh toán. Bạn nhắn Zalo để được mở nhé.')}
+  else gate('expired',j.mang?'Cần có mạng để kiểm tra.':'Chưa kiểm tra được, bạn thử lại sau nhé.')};
+setInterval(capNhat,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)khoiDong()});
+khoiDong();
 
 let dp=null;
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
