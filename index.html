@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Xưởng Ảnh Thương Hiệu Cá Nhân</title>
+<title>Xưởng Ảnh Thương Hiệu</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#17C662">
 <link rel="icon" href="icons/icon-192.png">
@@ -15,63 +15,92 @@
 <meta name="description" content="Chèn câu nói và thương hiệu lên ảnh, chuẩn 4:5 để đăng Facebook, Instagram. Chạy ngay trên trình duyệt, ảnh không rời khỏi máy.">
 <style>
 @font-face{font-family:"LatoBlack";src:url("assets/fonts/Lato-Black.ttf") format("truetype")}
-:root{--mint:#17C662;--lime:#F5FF6C;--ink:#0E3B22;--bg:#F6FFF2;--card:#fff;--line:#d5eccf;--muted:#4d7a60}
+:root{--mint:#17C662;--lime:#F5FF6C;--ink:#0E3B22;--bg:#F6FFF2;--card:#fff;--line:#d5eccf;--muted:#4d7a60;--dark:#0E3B22}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,sans-serif}
 header{background:linear-gradient(100deg,#17C662,#70DD66 55%,#F5FF6C);padding:18px 24px;color:var(--ink)}
 header h1{margin:0;font-size:24px}header p{margin:4px 0 0;font-size:14px}
-main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
 @media(max-width:820px){main{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-h2{margin:0 0 12px;font-size:16px}
-label{display:block;font-weight:600;font-size:13px;margin:12px 0 6px}
-input[type=text],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;color:var(--ink);background:#fff}
-textarea{min-height:70px;resize:vertical}
+.step{display:flex;align-items:center;gap:10px;margin:24px 0 12px;font-size:15px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--dark)}
+.step:first-child{margin-top:0}
+.step i{font-style:normal;background:var(--dark);color:#fff;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input[type=text],textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff}
+textarea{min-height:80px;resize:vertical}
 .drop{border:2px dashed var(--mint);border-radius:14px;padding:22px;text-align:center;cursor:pointer;background:#f1fff0}
 .drop.on{background:#e2ffd8}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-input[type=color]{width:44px;height:40px;border:1px solid var(--line);border-radius:10px;padding:2px;background:#fff}
+.seg{display:flex;gap:6px;background:#eefbe9;border:1px solid var(--line);border-radius:14px;padding:6px}
+.seg button{flex:1;background:transparent;color:var(--muted);border-radius:10px;padding:12px 8px;font-weight:700}
+.seg button.on{background:#fff;color:var(--dark);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 button{background:var(--mint);color:var(--ink);border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}
-button.alt{background:var(--lime)}button:disabled{opacity:.5;cursor:wait}
-.chips{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.tab{background:#f1fff0;border:1px solid var(--line);color:var(--ink);padding:8px 14px;font-weight:600}.tab.on{background:var(--mint);border-color:var(--mint)}
-.chip{background:#f1fff0;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;cursor:pointer;text-align:left;font-weight:500;color:var(--ink)}
-.preview{aspect-ratio:4/5;background:#e9f7e4;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--muted);text-align:center}
-.preview canvas{width:100%;height:100%;object-fit:contain}
-.hint{font-size:12px;color:var(--muted);margin-top:6px}
+button:disabled{opacity:.5;cursor:wait}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+.pill{background:#fff;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px}
+.pill.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.chips{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.chip{background:#f1fff0;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;text-align:left;font-weight:500;color:var(--ink)}
+.chip.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.swatches{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sw{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);padding:0;cursor:pointer}
+.sw.on{box-shadow:0 0 0 3px var(--dark)}
+input[type=color]{width:38px;height:38px;border:0;border-radius:10px;padding:0;background:none;cursor:pointer}
+.qty{display:flex;gap:10px}
+.qty button{flex:1;background:#fff;border:1px solid var(--line);color:var(--ink);font-size:20px;padding:16px 0}
+.qty button.on{background:var(--dark);border-color:var(--dark);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.out{background:#e9f7e4;border-radius:12px;padding:8px}
+.out canvas{width:100%;height:auto;display:block;border-radius:8px}
+.out button{width:100%;margin-top:8px;padding:9px 0;font-size:14px}
+.empty{aspect-ratio:4/5;background:#e9f7e4;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.45}
 footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
-<header><h1>Xưởng Ảnh Thương Hiệu Cá Nhân</h1><p>Chèn câu nói + thương hiệu lên ảnh, chuẩn 4:5 để đăng Facebook/Instagram. Miễn phí, ảnh không rời khỏi máy của chị.</p></header>
-<div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" class="alt">Cài app</button></div></div>
+<header><h1>Xưởng Ảnh Thương Hiệu</h1><p>Chèn câu nói + thương hiệu lên ảnh, chuẩn 4:5 để đăng Facebook/Instagram. Miễn phí, ảnh không rời khỏi máy của bạn.</p></header>
+<div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" style="background:var(--lime)">Cài app</button></div></div>
 <main>
   <section class="card">
-    <h2>1. Ảnh của chị</h2>
+    <div class="step"><i>1</i> Ảnh của bạn</div>
     <div class="drop" id="drop">Kéo ảnh vào đây hoặc bấm để chọn<input id="file" type="file" accept="image/*" hidden></div>
-    <h2 style="margin-top:20px">2. Chọn câu mẫu</h2>
-    <div class="row" id="tabs"></div>
-    <div class="chips" id="mau-list"></div>
-    <div class="row" style="margin-top:8px"><button class="alt" id="ngaunhien" type="button">Chọn ngẫu nhiên</button></div>
-    <h2 style="margin-top:20px">Hoặc tự viết câu của chị</h2>
-    <label for="tieude">Tiêu đề (6–9 từ). Bọc ĐÚNG MỘT cụm cần tô màu trong **dấu sao đôi**</label>
-    <textarea id="tieude" placeholder="Bạn không cần code để **xây AI agent**"></textarea>
-    <label for="noidung">Hoặc dán cả bài viết, bấm "Gợi ý tiêu đề"</label>
-    <textarea id="noidung" placeholder="Dán bài viết dài vào đây..."></textarea>
-    <div class="row" style="margin-top:8px"><button class="alt" id="goiy" type="button">Gợi ý tiêu đề</button></div>
-    <div class="chips" id="chips"></div>
-    <h2 style="margin-top:20px">3. Thương hiệu</h2>
-    <label for="badge">Chữ trên badge (để trống thì không có badge)</label>
-    <input id="badge" type="text" placeholder="vd. tên hoặc trang của chị">
-    <label for="mau">Màu nhấn</label>
-    <div class="row"><input id="mau" type="color" value="#17c662"><span class="hint">Mặc định xanh mint #17C662</span></div>
-    <div class="row" style="margin-top:20px"><button id="tao" type="button">Tạo ảnh</button><span class="hint" id="tt"></span></div>
+
+    <div class="step"><i>2</i> Chữ trên ảnh</div>
+    <div class="seg"><button type="button" id="m1" class="on">✨ Gợi ý giúp tôi</button><button type="button" id="m2">📝 Dán nội dung</button></div>
+    <div id="p1">
+      <div class="pills" id="pills"></div>
+      <p class="hint">Chọn lĩnh vực của bạn, mình đưa các câu tiêu đề phù hợp. Muốn đúng ý hơn, hãy dán nội dung của bạn.</p>
+      <div class="chips" id="mau-list"></div>
+      <div class="row" style="margin-top:10px"><button type="button" id="ngaunhien" style="background:var(--lime)">🎲 Chọn ngẫu nhiên</button></div>
+    </div>
+    <div id="p2" style="display:none">
+      <label for="noidung">Dán bài viết hoặc ý của bạn</label>
+      <textarea id="noidung" placeholder="Dán bài viết dài vào đây..."></textarea>
+      <div class="row" style="margin-top:8px"><button type="button" id="goiy" style="background:var(--lime)">Gợi ý tiêu đề từ nội dung</button></div>
+      <div class="chips" id="goiy-list"></div>
+      <label for="tieude">Hoặc tự viết tiêu đề (bọc cụm cần tô màu trong **dấu sao đôi**)</label>
+      <input id="tieude" type="text" placeholder="Bạn không cần code để **xây AI agent**">
+    </div>
+    <p class="hint" id="dachon"></p>
+
+    <div class="step"><i>3</i> Thương hiệu</div>
+    <label for="badge">Tên hoặc website trên nhãn</label>
+    <input id="badge" type="text" placeholder="vd: tenban.com (để trống nếu chưa có)">
+    <label>Màu nhấn cụm từ khoá</label>
+    <div class="swatches" id="sws"></div>
+
+    <div class="step"><i>4</i> Số lượng ảnh</div>
+    <div class="qty" id="qty"></div>
+    <p class="hint">Mỗi ảnh một câu khác nhau. Bạn chọn ít câu hơn số ảnh thì mình tự bổ sung câu cùng lĩnh vực.</p>
+    <div class="row" style="margin-top:18px"><button id="tao" type="button" style="font-size:17px;padding:14px 26px">Tạo ảnh</button><span class="hint" id="tt"></span></div>
   </section>
   <section class="card">
-    <h2>Kết quả</h2>
-    <div class="preview" id="pv"><span>Ảnh sẽ hiện ở đây</span></div>
-    <div class="row" style="margin-top:12px"><button id="tai" type="button" style="display:none">Tải ảnh về</button></div>
-    <p class="hint">Mọi thứ xử lý ngay trong trình duyệt của chị, không gửi ảnh đi đâu.</p>
+    <div class="step"><i>✓</i> Kết quả</div>
+    <div id="pv"><div class="empty">Ảnh sẽ hiện ở đây</div></div>
+    <div class="row" style="margin-top:12px"><button id="taitatca" type="button" style="display:none">Tải tất cả</button></div>
+    <p class="hint">Mọi thứ xử lý ngay trong trình duyệt của bạn, ảnh không gửi đi đâu.</p>
   </section>
 </main>
 <footer>Làm bởi Hà An · theo cách anh Phong dạy: biến skill thành app.</footer>
@@ -79,7 +108,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 <script>
 const $=id=>document.getElementById(id);
 const W=1080,H=1350,MARGIN=64,SP=18,FS=72,FMIN=42,BFS=28,BMIN=18,FONT='LatoBlack';
-let img=null;
+let img=null,nhom=Object.keys(CAU_MAU)[0],qty=1,mau='#17c662',mode=1,chon=[],goiyArr=[],outs=[];
 const nap=f=>{if(!f)return;const im=new Image();im.onload=()=>{img=im;$('drop').textContent='Đã chọn: '+f.name;$('drop').classList.add('on')};im.src=URL.createObjectURL(f)};
 $('drop').onclick=()=>$('file').click();$('file').onchange=e=>nap(e.target.files[0]);
 $('drop').ondragover=e=>e.preventDefault();$('drop').ondrop=e=>{e.preventDefault();nap(e.dataTransfer.files[0])};
@@ -97,7 +126,7 @@ function fit(c,toks,maxW){
   toks.forEach(t=>{const tr=cur.concat([t]);if(lineW(c,tr)>maxW&&cur.length){lines.push(cur);cur=[t]}else cur=tr});
   if(cur.length)lines.push(cur);return[FMIN,lines]}
 
-async function ve(im,tieude,badge,mau){
+async function ve(im,tieude,badge,mauChu){
   await Promise.race([document.fonts.load('72px '+FONT),new Promise(r=>setTimeout(r,6000))]);
   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
   const sc=Math.max(W/im.width,H/im.height),nw=im.width*sc,nh=im.height*sc;
@@ -114,7 +143,7 @@ async function ve(im,tieude,badge,mau){
     if(bf<BMIN){bf=BMIN;c.font=bf+'px '+FONT;bw=c.measureText(badge).width+44}bh=bf+26}
   let y=H-(MARGIN+bh+(has?34:0))-block;
   lines.forEach(l=>{c.font=size+'px '+FONT;let x=(W-lineW(c,l))/2;
-    l.forEach(([w,a])=>{c.fillStyle=a?mau:'#fff';c.fillText(w,x,y+asc);x+=c.measureText(w+' ').width});y+=lh+SP});
+    l.forEach(([w,a])=>{c.fillStyle=a?mauChu:'#fff';c.fillText(w,x,y+asc);x+=c.measureText(w+' ').width});y+=lh+SP});
   if(has){const x2=W-MARGIN,y2=H-MARGIN,x1=x2-bw,y1=y2-bh;
     c.fillStyle='#fff';c.beginPath();c.roundRect(x1,y1,bw,bh,bh/2);c.fill();
     c.font=bf+'px '+FONT;c.fillStyle='#0f0f0f';c.fillText(badge,x1+(bw-c.measureText(badge).width)/2,y1+(bh-bf)/2+bf*.82)}
@@ -128,22 +157,40 @@ function goiY(text){
     const m=t.match(/\S*\d\S*(?:\s+\S+)?/);
     if(m)t=t.replace(m[0],'**'+m[0]+'**');else t=w.length>4?w.slice(0,-3).join(' ')+' **'+w.slice(-3).join(' ')+'**':'**'+t+'**';
     return t})}
-$('goiy').onclick=()=>{$('chips').innerHTML='';goiY($('noidung').value).forEach(t=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=t;b.onclick=()=>{$('tieude').value=t};$('chips').appendChild(b)})};
-let cvOut=null;
+
+const plain=t=>t.replace(/\*\*/g,'');
+function capNhatChon(){$('dachon').textContent=chon.length?('Đã chọn '+chon.length+'/'+qty+' câu'+(chon.length<qty?'. Các ảnh còn lại mình tự chọn câu cùng lĩnh vực.':'.')):''}
+function bam(t){const i=chon.indexOf(t);if(i>=0)chon.splice(i,1);else{chon.push(t);while(chon.length>qty)chon.shift()}veChips();capNhatChon()}
+function veChips(){
+  const mk=(box,arr)=>{box.innerHTML='';arr.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(chon.includes(t)?' on':'');b.textContent=plain(t);b.onclick=()=>bam(t);box.appendChild(b)})};
+  mk($('mau-list'),CAU_MAU[nhom]);mk($('goiy-list'),goiyArr)}
+function vePills(){$('pills').innerHTML='';Object.keys(CAU_MAU).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pill'+(k===nhom?' on':'');b.textContent=k;b.onclick=()=>{nhom=k;vePills();veChips()};$('pills').appendChild(b)})}
+function setMode(m){mode=m;$('m1').classList.toggle('on',m===1);$('m2').classList.toggle('on',m===2);$('p1').style.display=m===1?'block':'none';$('p2').style.display=m===2?'block':'none'}
+$('m1').onclick=()=>setMode(1);$('m2').onclick=()=>setMode(2);
+$('ngaunhien').onclick=()=>{const a=CAU_MAU[nhom];chon=[];while(chon.length<qty&&chon.length<a.length){const t=a[Math.floor(Math.random()*a.length)];if(!chon.includes(t))chon.push(t)}veChips();capNhatChon()};
+$('goiy').onclick=()=>{goiyArr=goiY($('noidung').value);veChips()};
+const COLORS=['#17C662','#D8FF3D','#FF7A1A','#FF5C8A','#3B82F6','#FFC81E'];
+function veSw(){$('sws').innerHTML='';COLORS.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='sw'+(c.toLowerCase()===mau.toLowerCase()?' on':'');b.style.background=c;b.setAttribute('aria-label','Màu '+c);b.onclick=()=>{mau=c;veSw()};$('sws').appendChild(b)});
+  const i=document.createElement('input');i.type='color';i.value=mau;i.oninput=()=>{mau=i.value;document.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'))};$('sws').appendChild(i)}
+function veQty(){$('qty').innerHTML='';[1,2,3,4].forEach(n=>{const b=document.createElement('button');b.type='button';b.textContent=n;b.className=n===qty?'on':'';b.onclick=()=>{qty=n;while(chon.length>qty)chon.shift();veQty();veChips();capNhatChon()};$('qty').appendChild(b)})}
+function tai(cv,ten){return new Promise(r=>cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=ten;a.click();r()},'image/jpeg',.95))}
 $('tao').onclick=async()=>{
-  if(!img){$('tt').textContent='Chị chọn ảnh trước nhé';return}
-  if(!$('tieude').value.trim()){$('tt').textContent='Chị nhập tiêu đề nhé';return}
+  if(!img){$('tt').textContent='Bạn chọn ảnh trước nhé';return}
+  let list=chon.slice();const tay=$('tieude').value.trim();if(tay&&mode===2&&!list.includes(tay))list.unshift(tay);
+  list=list.slice(0,qty);
+  const pool=CAU_MAU[nhom].filter(t=>!list.includes(t));
+  while(list.length<qty&&pool.length){list.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0])}
+  if(!list.length){$('tt').textContent='Bạn chọn hoặc viết một câu nhé';return}
   $('tao').disabled=true;$('tt').textContent='Đang tạo...';
-  try{cvOut=await ve(img,$('tieude').value,$('badge').value,$('mau').value);$('pv').innerHTML='';$('pv').appendChild(cvOut);$('tai').style.display='inline-block';$('tt').textContent='Xong!'}
+  try{outs=[];$('pv').innerHTML='<div class="grid" id="gr"></div>';
+    for(let i=0;i<list.length;i++){const cv=await ve(img,list[i],$('badge').value,mau);outs.push(cv);
+      const d=document.createElement('div');d.className='out';d.appendChild(cv);const b=document.createElement('button');b.type='button';b.textContent='Tải ảnh '+(i+1);b.onclick=()=>tai(cv,'anh-thuong-hieu-'+(i+1)+'.jpg');d.appendChild(b);$('gr').appendChild(d)}
+    $('taitatca').style.display=outs.length>1?'inline-block':'none';$('tt').textContent='Xong!'}
   catch(e){$('tt').textContent='Lỗi: '+e.message}
   $('tao').disabled=false};
-$('tai').onclick=()=>cvOut&&cvOut.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='anh-text-overlay.jpg';a.click()},'image/jpeg',.95);
-let nhom=Object.keys(CAU_MAU)[0];
-const chon=t=>{$('tieude').value=t;if(img)$('tao').click();else $('tt').textContent='Đã chọn câu. Chị chọn ảnh rồi bấm Tạo ảnh nhé'};
-function veMau(){$('tabs').innerHTML='';Object.keys(CAU_MAU).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='tab'+(k===nhom?' on':'');b.textContent=k;b.onclick=()=>{nhom=k;veMau()};$('tabs').appendChild(b)});
-  $('mau-list').innerHTML='';CAU_MAU[nhom].forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t.replace(/\*\*/g,'');b.onclick=()=>chon(t);$('mau-list').appendChild(b)})}
-$('ngaunhien').onclick=()=>{const a=CAU_MAU[nhom];chon(a[Math.floor(Math.random()*a.length)])};
-veMau();
+$('taitatca').onclick=async()=>{for(let i=0;i<outs.length;i++){await tai(outs[i],'anh-thuong-hieu-'+(i+1)+'.jpg');await new Promise(r=>setTimeout(r,400))}};
+vePills();veChips();veSw();veQty();
+
 let dp=null;
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
