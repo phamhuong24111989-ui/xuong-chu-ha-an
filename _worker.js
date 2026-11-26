@@ -30,6 +30,8 @@ function trangThai(row, now) {
 const AI_LIMIT_PER_DAY = 15;
 const AI_MAX_IMAGE = 600000; // ký tự base64, tương đương ~450 KB ảnh đã thu nhỏ
 const AI_MODEL = "gemini-flash-latest";
+// Nơi AI dự phòng (Kyma, cùng kiểu OpenAI). Dùng khi chưa có khoá Gemini hoặc đặt AI_PROVIDER=kyma. Tên mô hình có hình ảnh cần thử bằng khoá thật.
+const KYMA_MODEL = "gemma-4-31b";
 
 function aiPrompt(nhom) {
   return `Bạn là biên tập viên viết câu chữ chèn lên ảnh cho thương hiệu cá nhân người Việt.
@@ -54,7 +56,7 @@ function loc(cau) {
 }
 
 async function aiCau(db, env, email, data, now) {
-  if (!env.GEMINI_API_KEY) return json({ error: "Tính năng AI chưa được bật. Bạn dùng câu mẫu hoặc tự viết nhé." }, 503);
+  if (!env.GEMINI_API_KEY && !env.KYMA_API_KEY) return json({ error: "Tính năng AI chưa được bật. Bạn dùng câu mẫu hoặc tự viết nhé." }, 503);
   const nhom = typeof data.nhom === "string" ? data.nhom.replace(/[^\p{L}\p{N} &,-]/gu, "").slice(0, 40) : "";
   const image = typeof data.image === "string" ? data.image : "";
   if (!nhom || !/^[A-Za-z0-9+/=]{200,}$/.test(image) || image.length > AI_MAX_IMAGE) return json({ error: "Ảnh hoặc lĩnh vực chưa hợp lệ." }, 400);
@@ -68,17 +70,31 @@ async function aiCau(db, env, email, data, now) {
     await db.prepare("INSERT OR IGNORE INTO ai_usage (email,day,n) VALUES (?,?,0)").bind(email, day).run();
     const up = await db.prepare("UPDATE ai_usage SET n=n+1 WHERE email=? AND day=? AND n<?").bind(email, day, AI_LIMIT_PER_DAY).run();
     if ((up?.meta?.changes ?? 0) === 0) return json({ error: "Hôm nay bạn đã dùng hết " + AI_LIMIT_PER_DAY + " lượt AI. Mai dùng tiếp nhé." }, 429);
-    const model = /^[a-z0-9.-]{3,60}$/.test(env.GEMINI_MODEL || "") ? env.GEMINI_MODEL : AI_MODEL;
+    const dungKyma = env.AI_PROVIDER === "kyma" || !env.GEMINI_API_KEY;
     let res;
     try {
-      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: aiPrompt(nhom) }, { inline_data: { mime_type: "image/jpeg", data: image } }] }],
-          generationConfig: { temperature: 0.9, responseMimeType: "application/json" },
-        }),
-      });
+      if (dungKyma) {
+        const kmodel = /^[A-Za-z0-9._/-]{3,80}$/.test(env.KYMA_MODEL || "") ? env.KYMA_MODEL : KYMA_MODEL;
+        res = await fetch("https://kymaapi.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: `Bearer ${env.KYMA_API_KEY}` },
+          body: JSON.stringify({
+            model: kmodel,
+            temperature: 0.9,
+            messages: [{ role: "user", content: [{ type: "text", text: aiPrompt(nhom) }, { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}` } }] }],
+          }),
+        });
+      } else {
+        const model = /^[a-z0-9.-]{3,60}$/.test(env.GEMINI_MODEL || "") ? env.GEMINI_MODEL : AI_MODEL;
+        res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: aiPrompt(nhom) }, { inline_data: { mime_type: "image/jpeg", data: image } }] }],
+            generationConfig: { temperature: 0.9, responseMimeType: "application/json" },
+          }),
+        });
+      }
     } catch {
       return json({ error: "AI đang bận. Bạn thử lại sau nhé." }, 502);
     }
@@ -86,8 +102,10 @@ async function aiCau(db, env, email, data, now) {
     let cau = [];
     try {
       const out = await res.json();
-      const text = out?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "";
-      cau = loc(JSON.parse(text));
+      const text = dungKyma
+        ? out?.choices?.[0]?.message?.content ?? ""
+        : out?.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") ?? "";
+      cau = loc(JSON.parse(String(text).replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "")));
     } catch {
       cau = [];
     }

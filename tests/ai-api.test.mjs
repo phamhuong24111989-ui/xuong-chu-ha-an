@@ -147,3 +147,37 @@ test("tên lĩnh vực được làm sạch trước khi đưa vào câu lệnh 
   const text = JSON.parse(calls[0].init.body).contents[0].parts[0].text;
   assert.ok(!text.includes("{{") && !text.includes('"}'));
 });
+
+test("chưa có khoá Gemini nhưng có khoá Kyma thì dùng Kyma (kiểu OpenAI, ảnh gửi dạng data URL)", async () => {
+  const { env } = makeEnv({ key: null });
+  env.KYMA_API_KEY = "kyma-gia";
+  await batDau(env);
+  const calls = [];
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url: String(url), init });
+    const boc = "`".repeat(3) + "json\n" + BON_CAU + "\n" + "`".repeat(3);
+    return new Response(JSON.stringify({ choices: [{ message: { content: boc } }] }), { status: 200 });
+  };
+  const r = await hoiAi(env);
+  const j = await r.json();
+  assert.equal(r.status, 200);
+  assert.equal(j.cau.length, 4);
+  assert.equal(calls[0].url, "https://kymaapi.com/v1/chat/completions");
+  assert.equal(calls[0].init.headers.authorization, "Bearer kyma-gia");
+  const sent = JSON.parse(calls[0].init.body);
+  assert.equal(sent.model, "gemma-4-31b");
+  assert.match(sent.messages[0].content[1].image_url.url, /^data:image\/jpeg;base64,/);
+  assert.ok(!JSON.stringify(j).includes("kyma-gia"));
+});
+
+test("có cả hai khoá thì ưu tiên Gemini, trừ khi đặt AI_PROVIDER=kyma", async () => {
+  const { env } = makeEnv();
+  env.KYMA_API_KEY = "kyma-gia";
+  await batDau(env);
+  const calls = gia(BON_CAU);
+  await hoiAi(env);
+  assert.match(calls[0].url, /generativelanguage/);
+  env.AI_PROVIDER = "kyma";
+  await hoiAi(env);
+  assert.match(calls[1].url, /kymaapi\.com/);
+});
