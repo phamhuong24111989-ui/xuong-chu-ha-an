@@ -77,7 +77,7 @@ async function aiCau(db, env, email, data, now) {
         const kmodel = /^[A-Za-z0-9._/-]{3,80}$/.test(env.KYMA_MODEL || "") ? env.KYMA_MODEL : KYMA_MODEL;
         res = await fetch("https://kymaapi.com/v1/chat/completions", {
           method: "POST",
-          headers: { "content-type": "application/json", authorization: `Bearer ${env.KYMA_API_KEY}` },
+          headers: { "content-type": "application/json", authorization: `Bearer ${String(env.KYMA_API_KEY).trim()}` },
           body: JSON.stringify({
             model: kmodel,
             temperature: 0.9,
@@ -88,7 +88,7 @@ async function aiCau(db, env, email, data, now) {
         const model = /^[a-z0-9.-]{3,60}$/.test(env.GEMINI_MODEL || "") ? env.GEMINI_MODEL : AI_MODEL;
         res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
           method: "POST",
-          headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+          headers: { "content-type": "application/json", "x-goog-api-key": String(env.GEMINI_API_KEY).trim() },
           body: JSON.stringify({
             contents: [{ parts: [{ text: aiPrompt(nhom) }, { inline_data: { mime_type: "image/jpeg", data: image } }] }],
             generationConfig: { temperature: 0.9, responseMimeType: "application/json" },
