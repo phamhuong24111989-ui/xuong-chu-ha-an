@@ -54,6 +54,8 @@ button:disabled{opacity:.5;cursor:wait}
 .kieu canvas{width:100%;height:auto;display:block;border-radius:6px;background:#e9f7e4;min-height:60px}
 .kieu span{display:block;font-size:12px;margin-top:6px;line-height:1.25}
 .kieu span small{display:block;color:var(--muted);font-weight:500}
+.kieu em{display:none;font-style:normal;font-size:11px;font-weight:800;background:var(--lime);color:var(--ink);border-radius:999px;padding:2px 8px;margin-top:4px}
+.kieu.goiy em{display:inline-block}
 .pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
 .pill{background:#fff;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px}
 .pill.on{background:var(--dark);border-color:var(--dark);color:#fff}
@@ -85,15 +87,18 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
     <div class="step"><i>1</i> Ảnh của bạn</div>
     <div class="drop" id="drop">Kéo ảnh vào đây hoặc bấm để chọn<input id="file" type="file" accept="image/*" hidden></div>
 
-    <div class="step"><i>2</i> Kiểu ảnh</div>
-    <div class="kieus" id="kieus"></div>
-    <p class="hint">Bấm vào một kiểu. Hình nhỏ sẽ đổi theo ảnh và màu bạn chọn. Kiểu <b>Giá khuyến mãi</b> và <b>Giảm giá chớp nhoáng</b>: bọc số giá trong dấu sao đôi, ví dụ <b>**199.000đ**</b>.</p>
+    <div class="step"><i>2</i> Lĩnh vực của bạn</div>
+    <div class="pills" id="pills"></div>
+    <p class="hint">Chọn lĩnh vực, mình gợi ý kiểu chữ và câu mẫu phù hợp.</p>
 
-    <div class="step"><i>3</i> Chữ trên ảnh</div>
+    <div class="step"><i>3</i> Kiểu chữ</div>
+    <div class="kieus" id="kieus"></div>
+    <p class="hint">Kiểu có nhãn <b>Gợi ý</b> hợp với lĩnh vực đang chọn, nhưng bạn chọn kiểu nào cũng được. Hình nhỏ đổi theo ảnh và màu bạn chọn. Kiểu <b>Giá khuyến mãi</b> và <b>Giảm giá chớp nhoáng</b>: bọc số giá trong dấu sao đôi, ví dụ <b>**199.000đ**</b>.</p>
+
+    <div class="step"><i>4</i> Chữ trên ảnh</div>
     <div class="seg"><button type="button" id="m1" class="on">✨ Gợi ý giúp tôi</button><button type="button" id="m2">📝 Dán nội dung</button></div>
     <div id="p1">
-      <div class="pills" id="pills"></div>
-      <p class="hint">Chọn lĩnh vực của bạn, mình đưa các câu tiêu đề phù hợp. Muốn đúng ý hơn, hãy dán nội dung của bạn.</p>
+      <p class="hint" style="margin-top:12px">Chọn một câu bên dưới. Muốn đúng ý hơn, hãy dán nội dung của bạn.</p>
       <div class="chips" id="mau-list"></div>
       <div class="row" style="margin-top:10px"><button type="button" id="ngaunhien" style="background:var(--lime)">🎲 Chọn ngẫu nhiên</button></div>
     </div>
@@ -108,13 +113,13 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
     <textarea id="tieude" style="min-height:72px" placeholder="Gõ câu của bạn ở đây. Mỗi dòng là một ảnh.&#10;Muốn tô màu một cụm thì bọc trong **dấu sao đôi**, vd: Tôi làm **thương hiệu của mình**"></textarea>
     <p class="hint">Không muốn dùng câu mẫu? Cứ gõ chữ của bạn vào đây. Bạn không bọc dấu sao thì mình tự tô màu vài chữ cuối câu.</p>
 
-    <div class="step"><i>4</i> Thương hiệu</div>
+    <div class="step"><i>5</i> Thương hiệu</div>
     <label for="badge">Tên hoặc website trên nhãn</label>
     <input id="badge" type="text" placeholder="vd: tenban.com (để trống nếu chưa có)">
     <label>Màu nhấn cụm từ khoá</label>
     <div class="swatches" id="sws"></div>
 
-    <div class="step"><i>5</i> Số lượng ảnh</div>
+    <div class="step"><i>6</i> Số lượng ảnh</div>
     <div class="qty" id="qty"></div>
     <p class="hint">Mỗi ảnh một câu khác nhau. Bạn chọn ít câu hơn số ảnh thì mình tự bổ sung câu cùng lĩnh vực.</p>
     <div class="row" style="margin-top:18px"><button id="tao" type="button" style="font-size:17px;padding:14px 26px">Tạo ảnh</button><span class="hint" id="tt"></span></div>
@@ -128,6 +133,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 </main>
 <footer>Làm bởi Hà An · theo cách anh Phong dạy: biến skill thành app.</footer>
 <script src="cau-mau.js"></script>
+<script src="cau-mau-2.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const MARGIN=64,BFS=28,BMIN=18,FONT='LatoBlack',TOI='#0f0f0f',INK='#0E3B22';
@@ -344,6 +350,25 @@ const KIEU=[
   chuNho(c,'!',W/2-c.measureText('!').width/2,cy+26,'l',muc(ac),80,100);
   ghi(c,b,W/2,cy+110,'c',INK,muc(ac),ac);
   veNhan(c,bn,bd,(W-bn.w)/2,cy+ch+30,'#fff',TOI)}},
+{id:'thiep-chuc',ten:'Thiệp chúc mừng',tl:'4:5',w:1080,h:1350,ve(c,W,H,im,tk,bd,ac){
+  cover(c,im,0,0,W,H);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(0,0,W,H);
+  const cs=[ac,'#FF5C8A','#FFC81E','#3B82F6','#fff'];c.globalAlpha=.85;
+  for(let i=0;i<60;i++){c.fillStyle=cs[i%5];c.beginPath();c.arc((i*7919%997)/997*W,(i*104729%991)/991*H*.5,6+(i%4)*3,0,7);c.fill()}c.globalAlpha=1;
+  const b=khoi(c,tk,{maxW:W-2*MARGIN-140,fs:84,fmin:44,maxLines:5,sp:16}),bn=nhanDo(c,bd,W-2*MARGIN-100);
+  const ch=95+b.h+(bn.h?bn.h+40:0)+95,cy=H-MARGIN-ch;
+  c.fillStyle='rgba(255,255,255,.94)';c.beginPath();c.roundRect(MARGIN,cy,W-2*MARGIN,ch,44);c.fill();
+  c.strokeStyle=ac;c.lineWidth=8;c.beginPath();c.roundRect(MARGIN+18,cy+18,W-2*MARGIN-36,ch-36,32);c.stroke();
+  ghi(c,b,W/2,cy+95,'c',INK,muc(ac),ac);
+  veNhan(c,bn,bd,(W-bn.w)/2,cy+95+b.h+40,ac,muc(ac))}},
+{id:'thiep-moi',ten:'Thiệp mời',tl:'4:5',w:1080,h:1350,ve(c,W,H,im,tk,bd,ac){
+  cover(c,im,0,0,W,H);c.fillStyle='rgba(8,24,16,.72)';c.fillRect(0,0,W,H);
+  c.strokeStyle=ac;c.lineWidth=5;c.strokeRect(46,46,W-92,H-92);c.lineWidth=2;c.strokeRect(70,70,W-140,H-140);
+  chuNho(c,'THƯ MỜI',W/2,230,'c',ac,44,W-300);
+  const b=khoi(c,tk,{maxW:W-260,fs:80,fmin:44,maxLines:6,sp:16}),y=(H-b.h)/2+30;
+  c.fillStyle=ac;c.fillRect(W/2-60,262,120,3);
+  ghi(c,b,W/2,y,'c','#fff',ac);
+  c.fillStyle=ac;c.fillRect(W/2-60,y+b.h+50,120,3);
+  if(bd)chuNho(c,bd,W/2,H-150,'c','rgba(255,255,255,.9)',30,W-260)}},
 {id:'vuong',ten:'Vuông',tl:'1:1',w:1080,h:1080,ve:macDinh}
 ];
 let kieu=KIEU[0];
@@ -360,10 +385,24 @@ function anhMau(){const cv=document.createElement('canvas');cv.width=800;cv.heig
   const g=c.createLinearGradient(0,0,800,1000);g.addColorStop(0,'#3a6b52');g.addColorStop(1,'#14301f');c.fillStyle=g;c.fillRect(0,0,800,1000);
   c.fillStyle='rgba(255,255,255,.16)';c.beginPath();c.arc(400,380,190,0,7);c.fill();c.beginPath();c.ellipse(400,900,330,300,0,0,7);c.fill();return cv}
 const mauSrc=anhMau();
+const GOI_Y={'Poster':['poster','tieu-de-lon','slide','chop-nhoang','gia-khuyen-mai','su-kien'],
+ 'Thiệp chúc mừng':['thiep-chuc','khung-vien','sang-trong','meo-hay','trich-dan'],
+ 'Thiệp mời':['thiep-moi','su-kien','sang-trong','khung-vien','trich-dan'],
+ 'Thương hiệu cá nhân':['mac-dinh','trich-dan','toi-gian','sang-trong','khung-vien'],
+ 'Kinh doanh':['gia-khuyen-mai','san-pham','tin-nong','chop-nhoang','ban-tin'],
+ 'AI & công nghệ':['den-dem','tin-nong','ban-tin','tieu-de-lon','tuong-phan'],
+ 'Làm đẹp':['sang-trong','phu-mau','khung-vien','trich-dan','san-pham'],
+ 'Sức khoẻ':['meo-hay','phu-mau','toi-gian','mac-dinh','hop-mau'],
+ 'Chuyên gia & coach':['trich-dan','tuong-phan','slide','tieu-de-lon','youtube'],
+ 'Phong cách sống':['toi-gian','trich-dan','ruy-bang','story','khung-vien']};
 function veKieu(){const box=$('kieus');box.innerHTML='';
   KIEU.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='kieu'+(k===kieu?' on':'');
-    b.appendChild(document.createElement('canvas'));const sp=document.createElement('span');sp.innerHTML='<b></b><small></small>';sp.firstChild.textContent=k.ten;sp.lastChild.textContent=k.tl;b.appendChild(sp);
-    b.onclick=()=>{kieu=k;document.querySelectorAll('.kieu').forEach(x=>x.classList.toggle('on',x===b))};k.btn=b;box.appendChild(b)})}
+    b.appendChild(document.createElement('canvas'));const sp=document.createElement('span');sp.innerHTML='<b></b><small></small><em>Gợi ý</em>';sp.firstChild.textContent=k.ten;sp.children[1].textContent=k.tl;b.appendChild(sp);
+    b.onclick=()=>{kieu=k;document.querySelectorAll('.kieu').forEach(x=>x.classList.toggle('on',x===b))};k.btn=b;box.appendChild(b)});sapKieu()}
+function sapKieu(){const g=GOI_Y[nhom]||[],box=$('kieus');
+  const ds=KIEU.map((k,i)=>({k,r:g.includes(k.id)?g.indexOf(k.id):100+i})).sort((a,b)=>a.r-b.r);
+  ds.forEach(({k})=>{k.btn.classList.toggle('goiy',g.includes(k.id));box.appendChild(k.btn)});
+  if(g.length){kieu=KIEU.find(k=>k.id===g[0]);document.querySelectorAll('.kieu').forEach(x=>x.classList.toggle('on',x===kieu.btn))}}
 let veTok=0;
 async function veThumbs(){const my=++veTok;
   for(const k of KIEU){if(my!==veTok)return;
@@ -386,7 +425,7 @@ function bam(t){const i=chon.indexOf(t);if(i>=0)chon.splice(i,1);else{chon.push(
 function veChips(){
   const mk=(box,arr)=>{box.innerHTML='';arr.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip'+(chon.includes(t)?' on':'');b.textContent=plain(t);b.onclick=()=>bam(t);box.appendChild(b)})};
   mk($('mau-list'),CAU_MAU[nhom]);mk($('goiy-list'),goiyArr)}
-function vePills(){$('pills').innerHTML='';Object.keys(CAU_MAU).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pill'+(k===nhom?' on':'');b.textContent=k;b.onclick=()=>{nhom=k;vePills();veChips()};$('pills').appendChild(b)})}
+function vePills(){$('pills').innerHTML='';Object.keys(CAU_MAU).forEach(k=>{const b=document.createElement('button');b.type='button';b.className='pill'+(k===nhom?' on':'');b.textContent=k;b.onclick=()=>{nhom=k;vePills();veChips();sapKieu()};$('pills').appendChild(b)})}
 function setMode(m){mode=m;$('m1').classList.toggle('on',m===1);$('m2').classList.toggle('on',m===2);$('p1').style.display=m===1?'block':'none';$('p2').style.display=m===2?'block':'none'}
 $('m1').onclick=()=>setMode(1);$('m2').onclick=()=>setMode(2);
 $('ngaunhien').onclick=()=>{const a=CAU_MAU[nhom];chon=[];while(chon.length<qty&&chon.length<a.length){const t=a[Math.floor(Math.random()*a.length)];if(!chon.includes(t))chon.push(t)}veChips();capNhatChon()};
