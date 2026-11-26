@@ -98,7 +98,7 @@ async function aiCau(db, env, email, data, now) {
     } catch {
       return json({ error: "AI đang bận. Bạn thử lại sau nhé." }, 502);
     }
-    if (!res.ok) return json({ error: "AI đang bận. Bạn thử lại sau nhé." }, 502);
+    if (!res.ok) return json({ error: "AI đang bận. Bạn thử lại sau nhé.", ma: (dungKyma ? "kyma-" : "gemini-") + res.status }, 502);
     let cau = [];
     try {
       const out = await res.json();
@@ -109,7 +109,7 @@ async function aiCau(db, env, email, data, now) {
     } catch {
       cau = [];
     }
-    if (!cau.length) return json({ error: "AI chưa viết được câu phù hợp. Bạn bấm thử lại nhé." }, 502);
+    if (!cau.length) return json({ error: "AI chưa viết được câu phù hợp. Bạn bấm thử lại nhé.", ma: "khong-ra-cau" }, 502);
     return json({ ok: true, cau });
   } catch {
     return json({ error: "Chưa dùng được AI. Bạn thử lại sau nhé." }, 503);
