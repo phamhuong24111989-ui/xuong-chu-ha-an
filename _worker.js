@@ -32,6 +32,7 @@ const AI_MAX_IMAGE = 600000; // ký tự base64, tương đương ~450 KB ảnh 
 const AI_MODEL = "gemini-flash-latest";
 // Nơi AI dự phòng (Kyma, cùng kiểu OpenAI). Dùng khi chưa có khoá Gemini hoặc đặt AI_PROVIDER=kyma. Tên mô hình có hình ảnh cần thử bằng khoá thật.
 const KYMA_MODEL = "gemma-4-31b";
+const KYMA_THU = ["gemma-4-31b", "qwen3.7-flash", "nemotron-3.5-super-vl", "step-3.7-flash", "gpt-6-luna", "gpt-5.6-luna", "minimax-m3.1-flash"];
 
 function aiPrompt(nhom) {
   return `Bạn là biên tập viên viết câu chữ chèn lên ảnh cho thương hiệu cá nhân người Việt.
@@ -74,13 +75,15 @@ async function aiCau(db, env, email, data, now) {
     let res;
     try {
       if (dungKyma) {
-        const kmodel = /^[A-Za-z0-9._/-]{3,80}$/.test(env.KYMA_MODEL || "") ? env.KYMA_MODEL : KYMA_MODEL;
+        const mac_dinh = /^[A-Za-z0-9._/-]{3,80}$/.test(env.KYMA_MODEL || "") ? env.KYMA_MODEL : KYMA_MODEL;
+        const kmodel = KYMA_THU.includes(data.model) ? data.model : mac_dinh; // cho phép chọn thử trong danh sách đã duyệt để đo tốc độ
         res = await fetch("https://kymaapi.com/v1/chat/completions", {
           method: "POST",
           headers: { "content-type": "application/json", authorization: `Bearer ${String(env.KYMA_API_KEY).trim()}` },
           body: JSON.stringify({
             model: kmodel,
             temperature: 0.9,
+            max_tokens: 600,
             messages: [{ role: "user", content: [{ type: "text", text: aiPrompt(nhom) }, { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}` } }] }],
           }),
         });

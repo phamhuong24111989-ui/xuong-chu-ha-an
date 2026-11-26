@@ -488,7 +488,7 @@ $('m1').onclick=()=>setMode(1);$('m2').onclick=()=>setMode(2);
 $('ngaunhien').onclick=()=>{const a=CAU_MAU[nhom];chon=[];while(chon.length<qty&&chon.length<a.length){const t=a[Math.floor(Math.random()*a.length)];if(!chon.includes(t))chon.push(t)}veChips();capNhatChon()};
 $('goiy').onclick=()=>{goiyArr=goiY($('noidung').value);veChips()};
 // AI viết câu theo ảnh: gửi ảnh đã thu nhỏ lên máy chủ của mình, máy chủ hỏi Gemini (khoá nằm ở máy chủ).
-function anhNho(){const s=Math.min(1,768/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.8).split(',')[1]}
+function anhNho(){const s=Math.min(1,512/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.8).split(',')[1]}
 $('aibtn').onclick=async()=>{
   if(!img){$('aitt').textContent='Bạn chọn ảnh ở bước 1 trước nhé.';return}
   if(!choPhep()){capNhat();return}
