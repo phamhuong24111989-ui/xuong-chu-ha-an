@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Xưởng Chữ Hà An</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#17C662">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Xưởng Chữ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="Chèn câu nói và thương hiệu lên ảnh, chuẩn 4:5 để đăng Facebook, Instagram. Chạy ngay trên trình duyệt, ảnh không rời khỏi máy.">
 <style>
 @font-face{font-family:"LatoBlack";src:url("assets/fonts/Lato-Black.ttf") format("truetype")}
@@ -35,6 +43,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 </head>
 <body>
 <header><h1>Xưởng Chữ Hà An</h1><p>Chèn câu nói + thương hiệu lên ảnh, chuẩn 4:5 để đăng Facebook/Instagram. Miễn phí, ảnh không rời khỏi máy của chị.</p></header>
+<div id="cai" style="display:none;max-width:1100px;margin:16px auto 0;padding:0 16px"><div class="card row" style="justify-content:space-between"><span id="caitext"><b>Cài app về điện thoại</b> để mở như app thật, dùng cả khi không có mạng.</span><button id="caibtn" type="button" class="alt">Cài app</button></div></div>
 <main>
   <section class="card">
     <h2>1. Ảnh của chị</h2>
@@ -123,6 +132,16 @@ $('tao').onclick=async()=>{
   catch(e){$('tt').textContent='Lỗi: '+e.message}
   $('tao').disabled=false};
 $('tai').onclick=()=>cvOut&&cvOut.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='anh-text-overlay.jpg';a.click()},'image/jpeg',.95);
+let dp=null;
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+if(!standalone){
+  if(ios){$('cai').style.display='block';$('caibtn').style.display='none';$('caitext').innerHTML='<b>Cài app trên iPhone:</b> mở link bằng Safari, bấm nút Chia sẻ (hình vuông có mũi tên lên) rồi chọn <b>Thêm vào Màn hình chính</b>.'}
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('cai').style.display='block'});
+  $('caibtn').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('cai').style.display='none'};
+}
+addEventListener('appinstalled',()=>{$('cai').style.display='none'});
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
