@@ -83,7 +83,8 @@ async function aiCau(db, env, email, data, now) {
           body: JSON.stringify({
             model: kmodel,
             temperature: 0.9,
-            max_tokens: 600,
+            max_tokens: 1500,
+            reasoning_effort: "low",
             messages: [{ role: "user", content: [{ type: "text", text: aiPrompt(nhom) }, { type: "image_url", image_url: { url: `data:image/jpeg;base64,${image}` } }] }],
           }),
         });
