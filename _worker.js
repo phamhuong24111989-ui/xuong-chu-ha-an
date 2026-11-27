@@ -2,7 +2,7 @@
 // Chỉ làm một việc: nhận email, ghi vào kho khách hàng và cho biết khách còn bao nhiêu ngày dùng thử.
 // Mọi đường dẫn khác chuyển thẳng cho các tệp của trang.
 const APP = "xuong-anh";
-const TRIAL_DAYS = 7;
+const TRIAL_DAYS = 10;
 const DAY = 86400000;
 
 const json = (body, status = 200) =>

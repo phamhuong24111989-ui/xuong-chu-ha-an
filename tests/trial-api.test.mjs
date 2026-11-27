@@ -45,13 +45,13 @@ const call = (env, body, { origin = "https://app.test", type = "application/json
     method, headers: { origin, "content-type": type }, body: method === "POST" ? JSON.stringify(body) : undefined,
   }), env);
 
-test("khách mới bắt đầu dùng thử 7 ngày và email được lưu vào kho khách hàng", async () => {
+test("khách mới bắt đầu dùng thử 10 ngày và email được lưu vào kho khách hàng", async () => {
   const { env, sqlite } = makeEnv();
   const r = await call(env, { email: "  Khach@Example.com ", create: true, marketingOptIn: true });
   const j = await r.json();
   assert.equal(r.status, 200);
   assert.equal(j.status, "trial");
-  assert.equal(j.days_left, 7);
+  assert.equal(j.days_left, 10);
   const c = sqlite.prepare("SELECT * FROM customers").get();
   assert.equal(c.email, "khach@example.com");
   assert.equal(c.source, "xuong_anh_trial");
@@ -59,7 +59,7 @@ test("khách mới bắt đầu dùng thử 7 ngày và email được lưu vào
   assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM customer_events WHERE event_type='trial_started'").get().n, 1);
 });
 
-test("gửi lại cùng email không cấp thêm 7 ngày và không nhân đôi hồ sơ", async () => {
+test("gửi lại cùng email không cấp thêm 10 ngày và không nhân đôi hồ sơ", async () => {
   const { env, sqlite } = makeEnv();
   await call(env, { email: "a@b.vn", create: true });
   sqlite.prepare("UPDATE app_trials SET started_at=?, expires_at=?").run("2020-01-01T00:00:00.000Z", "2020-01-08T00:00:00.000Z");

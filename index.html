@@ -173,17 +173,18 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 </div></div>
 <div class="gate" id="gate" hidden><div class="gatebox">
   <div id="gate-new">
-    <h2>Dùng thử miễn phí 7 ngày</h2>
+    <h2>Dùng thử miễn phí 10 ngày</h2>
     <p>Nhập email của bạn để bắt đầu. Không cần mật khẩu, không cần thẻ.</p>
     <form id="gate-form">
       <input id="gate-email" type="email" autocomplete="email" placeholder="email-cua-ban@gmail.com" required>
       <label class="chk"><input type="checkbox" id="gate-mk"><span>Mình đồng ý nhận tin ưu đãi và mẹo làm ảnh qua email (không bắt buộc).</span></label>
       <button id="gate-go" type="submit">Bắt đầu dùng thử</button>
     </form>
-    <p class="hint" style="margin-top:12px">Email chỉ dùng để tạo tài khoản dùng thử. Hết 7 ngày, bạn nhắn Zalo để dùng tiếp.</p>
+    <p class="hint" style="margin-top:12px">Email chỉ dùng để tạo tài khoản dùng thử. Hết 10 ngày, bạn nhắn Zalo để dùng tiếp.</p>
+    <a class="btn" href="https://zalo.me/0908474139" target="_blank" rel="noopener" style="background:#fff;border:1px solid var(--line);margin-top:10px">Kết nối Zalo hỗ trợ</a>
   </div>
   <div id="gate-end" hidden>
-    <h2>Đã hết 7 ngày dùng thử</h2>
+    <h2>Đã hết 10 ngày dùng thử</h2>
     <p>Cảm ơn bạn đã dùng thử Xưởng Ảnh Thương Hiệu. Để dùng tiếp, bạn nhắn Zalo, mình báo phí và mở lại cho email <b id="gate-mail"></b>.</p>
     <a class="btn" href="https://zalo.me/0908474139" target="_blank" rel="noopener">Nhắn Zalo để dùng tiếp</a>
     <button id="gate-check" type="button" style="background:#fff;border:1px solid var(--line)">Mình đã trả phí, kiểm tra lại</button>
@@ -194,7 +195,7 @@ footer{max-width:1100px;margin:0 auto 32px;padding:0 16px;font-size:12px;color:v
 <script src="cau-mau-2.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const CHE_DO_MAU=/[?&]mau=1/.test(location.search); // trang xem các kiểu chữ trên ảnh thật để chụp màn hình chia sẻ; app bình thường không đổi
+const CHE_DO_MAU=/[?&]mau=[12]/.test(location.search); // trang xem các kiểu chữ trên ảnh thật để chụp màn hình chia sẻ; app bình thường không đổi
 const MARGIN=64,BFS=28,BMIN=18,FONT='LatoBlack',TOI='#0f0f0f',INK='#0E3B22';
 let img=null,nhom=Object.keys(CAU_MAU)[0],qty=1,mau='#17c662',mode=1,chon=[],goiyArr=[],aiArr=[],outs=[];
 const nap=f=>{if(!f)return;const im=new Image();im.onload=()=>{img=im;$('drop').textContent='Đã chọn: '+f.name;$('drop').classList.add('on');veThumbs()};im.src=URL.createObjectURL(f)};
@@ -549,7 +550,7 @@ $('tao').onclick=async()=>{
 $('taitatca').onclick=()=>taiNhieu(outs,outs.map((_,i)=>'anh-'+outs.kieu+'-'+(i+1)+'.jpg'));
 vePills();veChips();veSw();veQty();veKieu();veThumbs();
 
-// Đăng nhập bằng email + dùng thử 7 ngày. Máy chủ (/api/trial) là nơi quyết định; bản lưu trong máy chỉ để dùng khi mất mạng.
+// Đăng nhập bằng email + dùng thử 10 ngày. Máy chủ (/api/trial) là nơi quyết định; bản lưu trong máy chỉ để dùng khi mất mạng.
 const API='/api/trial',LS='xa_acc',ZALO='https://zalo.me/0908474139';
 const docTK=()=>{try{return JSON.parse(localStorage.getItem(LS)||'null')}catch(e){return null}};
 const luuTK=s=>{try{s?localStorage.setItem(LS,JSON.stringify(s)):localStorage.removeItem(LS)}catch(e){}};
@@ -616,8 +617,8 @@ const CAU_MAU_XEM={'poster':'Dám nghĩ lớn, **dám làm thật**','poster-nga
 async function cheDoMau(){
   document.title='Xưởng Ảnh Thương Hiệu · 27 kiểu chữ';document.body.style.background='#F6FFF2';
   document.body.innerHTML='<div class="mau-wrap"><h1>Xưởng Ảnh Thương Hiệu</h1><p>'+KIEU.length+' kiểu chữ có sẵn: poster, thiệp, bìa video, story và nhiều kiểu khác</p><div class="mau-grid" id="mau-grid"></div></div>';
-  const im=new Image();im.src='assets/mau-ha-an.jpg';await im.decode();
-  for(const k of KIEU){const cv=await ve(im,CAU_MAU_XEM[k.id]||'Thương hiệu cá nhân là **tài sản dài hạn**','Xưởng Ảnh Thương Hiệu','#17C662',k,.3);
+  const im=new Image();im.src=/[?&]mau=2/.test(location.search)?'assets/mau-ngoai-troi.jpg':'assets/mau-ha-an.jpg';await im.decode();
+  for(const k of KIEU){const cv=await ve(im,CAU_MAU_XEM[k.id]||'Thương hiệu cá nhân là **tài sản dài hạn**','Xưởng Ảnh Thương Hiệu',/[?&]mau=2/.test(location.search)?'#F5FF6C':'#17C662',k,.3);
     const d=document.createElement('div');d.className='mau-o';d.appendChild(cv);const t=document.createElement('div');t.className='mau-t';t.textContent=k.ten+' · '+k.tl;d.appendChild(t);$('mau-grid').appendChild(d)}}
 if(CHE_DO_MAU)cheDoMau();
 
